@@ -1,14 +1,14 @@
 {
-  "name": "agentic-theory-lab",
-  "version": "1.0.0",
-  "private": false,
-  "description": "Static MVP for a human-in-the-loop multi-agent Information Systems theory construction laboratory.",
-  "scripts": {
-    "check": "node --check app.js",
-    "serve": "python3 -m http.server 4173",
-    "qa": "node tests/manual-qa.js"
-  },
-  "devDependencies": {
-    "playwright": "^1.59.1"
-  }
+	"name": "agentic-theory-lab",
+	"version": "1.0.0",
+	"private": false,
+	"description": "Static human-in-the-loop multi-agent Information Systems theory construction laboratory with provider-backed agent execution.",
+	"scripts": {
+		"check": "node --check app.js",
+		"serve": "python3 -m http.server 4173",
+		"qa": "node tests/manual-qa.js"
+	},
+	"devDependencies": {
+		"playwright": "^1.59.1"
+	}
 }
