@@ -1,4 +1,5 @@
 node_modules/
+.sisyphus/
 .DS_Store
 *.log
 playwright-report/
