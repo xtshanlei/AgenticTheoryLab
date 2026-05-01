@@ -81,8 +81,16 @@ async function main() {
 	await page.goto(baseUrl);
 	await page.evaluate(() => localStorage.clear());
 	await page.reload();
+	const openAsset = async (target) => {
+		await page.click('[data-target="assets"]');
+		await page.click(`.asset-card[data-target="${target}"]`);
+	};
+	const openReviewTool = async (target) => {
+		await page.click('[data-target="review"]');
+		await page.click(`.asset-card[data-target="${target}"]`);
+	};
 	await page.click("#seedExample");
-	await page.click('[data-target="settings"]');
+	await openAsset("settings");
 	await page.fill("#llmProviderName", "Mock OpenAI-compatible");
 	await page.fill("#llmEndpoint", `${origin}/mock-llm`);
 	await page.fill("#llmApiKey", "test-llm-key");
@@ -91,29 +99,29 @@ async function main() {
 	await page.fill("#elsevierApiKey", "test-elsevier-key");
 	await page.fill("#elsevierQuerySetting", "agentic AI governance");
 	await page.click("#saveProviders");
-	await page.click('[data-target="sources"]');
+	await openAsset("sources");
 	await page.fill("#elsevierQuery", "agentic AI governance failure");
-	await page.click('[data-target="settings"]');
+	await openAsset("settings");
 	await page.fill("#elsevierEndpoint", `${origin}/mock-elsevier-error`);
 	await page.click("#saveProviders");
-	await page.click('[data-target="sources"]');
+	await openAsset("sources");
 	await page.click("#discoverElsevier");
 	await page.waitForFunction(() =>
 		JSON.parse(
 			localStorage.getItem("atl-state"),
 		).providerSettings.lastStatus.includes("HTTP 503"),
 	);
-	await page.click('[data-target="settings"]');
+	await openAsset("settings");
 	await page.fill("#elsevierEndpoint", `${origin}/mock-elsevier`);
 	await page.click("#saveProviders");
-	await page.click('[data-target="sources"]');
+	await openAsset("sources");
 	await page.click("#discoverElsevier");
 	await page.waitForFunction(() =>
 		JSON.parse(localStorage.getItem("atl-state")).references.some((reference) =>
 			reference.title.includes("Mock Elsevier article"),
 		),
 	);
-	await page.click('[data-target="documents"]');
+	await openAsset("documents");
 	await page.setInputFiles("#docFile", "requirements.md");
 	await page.click("#addDocument");
 	await page.click('[data-phase="conceptualisation"]');
@@ -123,7 +131,7 @@ async function main() {
 			(entry) => entry.model === "mock-theory-model",
 		),
 	);
-	await page.click('[data-target="settings"]');
+	await openAsset("settings");
 	await page.fill("#llmEndpoint", `${origin}/mock-llm-error`);
 	await page.click("#saveProviders");
 	await page.click('[data-phase="conceptualisation"]');
@@ -132,7 +140,7 @@ async function main() {
 		const state = JSON.parse(localStorage.getItem("atl-state"));
 		return state.providerSettings.lastStatus.includes("HTTP 500");
 	});
-	await page.click('[data-target="settings"]');
+	await openAsset("settings");
 	await page.fill("#llmEndpoint", `${origin}/mock-llm-text`);
 	await page.click("#saveProviders");
 	await page.click('[data-phase="conceptualisation"]');
@@ -141,7 +149,7 @@ async function main() {
 		const state = JSON.parse(localStorage.getItem("atl-state"));
 		return state.outputs.construct_decomposition?.critique.includes("non-JSON");
 	});
-	await page.click('[data-target="settings"]');
+	await openAsset("settings");
 	await page.fill("#llmEndpoint", `${origin}/mock-llm`);
 	await page.click("#saveProviders");
 
@@ -226,11 +234,11 @@ async function main() {
 		await page.click("#approvePhase");
 	}
 
-	await page.click('[data-target="evaluation"]');
+	await openReviewTool("evaluation");
 	await page.fill('[data-score="Overall"]', "5");
 	await page.click("#saveScores");
 
-	await page.click('[data-target="export"]');
+	await openReviewTool("export");
 	const result = {
 		title: await page.textContent("#projectTitle"),
 		approvals: await page.textContent("#approvedCount"),

@@ -953,15 +953,11 @@ function updateChrome() {
 
 function renderNav() {
 	const items = [
-		{ id: "project", title: "Create Project" },
-		{ id: "dashboard", title: "Dashboard" },
-		{ id: "settings", title: "Provider APIs" },
-		{ id: "documents", title: "Documents" },
+		{ id: "dashboard", title: "Overview" },
+		{ id: "project", title: "Project" },
+		{ id: "assets", title: "Research Assets" },
 		...phaseDefinitions.map((phase) => ({ id: phase.id, title: phase.short })),
-		{ id: "review", title: "Review Hub" },
-		{ id: "sources", title: "Source Verifier" },
-		{ id: "evaluation", title: "Evaluation" },
-		{ id: "export", title: "Export" },
+		{ id: "review", title: "Review & Export" },
 	];
 	document.getElementById("nav").innerHTML = items
 		.map(
@@ -980,9 +976,9 @@ function statusMark(id) {
 		state.project.title !== "Untitled theory-construction project"
 	)
 		return "✓";
-	if (id === "documents")
+	if (id === "assets")
 		return String(state.documents.length + state.references.length || "");
-	if (id === "settings") {
+	if (id === "settings" || id === "assets") {
 		if (hasLlmConfig() && hasElsevierConfig()) return "LLM+ELS";
 		if (hasLlmConfig()) return "LLM";
 		if (hasElsevierConfig()) return "ELS";
@@ -1033,6 +1029,7 @@ function show(target) {
 	save();
 	if (target === "project") renderProject();
 	else if (target === "dashboard") renderDashboard();
+	else if (target === "assets") renderAssets();
 	else if (target === "settings") renderSettings();
 	else if (target === "documents") renderDocuments();
 	else if (target === "review") renderReview();
@@ -1043,7 +1040,7 @@ function show(target) {
 }
 
 function renderProject() {
-	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Initialize inquiry</p><h2>Create new research project</h2><p>Capture the problem framing, theoretical constraints, empirical context, ethics, and data assumptions used by all agents.</p><div class="form-grid"><label>Project title<input id="titleInput" value="${escapeAttr(state.project.title)}"></label><label>Target field or journal<input id="journalInput" value="${escapeAttr(state.project.journal)}"></label><label class="wide">Research problem<textarea id="descriptionInput">${escapeHtml(state.project.description)}</textarea></label><label>Field<input id="fieldInput" value="${escapeAttr(state.project.field)}"></label><label>Empirical context<input id="contextInput" value="${escapeAttr(state.project.context)}"></label><label class="wide">Known theories<textarea id="theoryInput">${escapeHtml(state.project.knownTheories)}</textarea></label><label>Target population<input id="populationInput" value="${escapeAttr(state.project.population)}"></label><label>Data collection mode<input id="dataModeInput" value="${escapeAttr(state.project.dataMode)}"></label><label class="wide">Ethical / institutional constraints<textarea id="ethicsInput">${escapeHtml(state.project.ethics)}</textarea></label></div><div class="button-row"><button type="button" id="saveProject">Save project</button><button type="button" class="secondary" id="exampleProject">Use example template</button><button type="button" class="secondary" id="resetWorkspace">Reset local workspace</button></div></section>`;
+	view.innerHTML = `<section class="card ribbon focus-card"><p class="eyebrow">Project frame</p><h2>Create research project</h2><p>Capture only the framing information needed to guide the agents. Additional material belongs in Research Assets.</p><div class="form-grid"><label>Project title<input id="titleInput" value="${escapeAttr(state.project.title)}"></label><label>Target field or journal<input id="journalInput" value="${escapeAttr(state.project.journal)}"></label><label class="wide">Research problem<textarea id="descriptionInput">${escapeHtml(state.project.description)}</textarea></label><label>Field<input id="fieldInput" value="${escapeAttr(state.project.field)}"></label><label>Empirical context<input id="contextInput" value="${escapeAttr(state.project.context)}"></label><details class="quiet-details wide"><summary>Optional research context</summary><div class="form-grid nested-form"><label class="wide">Known theories<textarea id="theoryInput">${escapeHtml(state.project.knownTheories)}</textarea></label><label>Target population<input id="populationInput" value="${escapeAttr(state.project.population)}"></label><label>Data collection mode<input id="dataModeInput" value="${escapeAttr(state.project.dataMode)}"></label><label class="wide">Ethical / institutional constraints<textarea id="ethicsInput">${escapeHtml(state.project.ethics)}</textarea></label></div></details></div><div class="button-row"><button type="button" id="saveProject">Save project</button><button type="button" class="secondary" id="exampleProject">Use example template</button><button type="button" class="secondary" id="resetWorkspace">Reset workspace</button></div></section>`;
 	document.getElementById("saveProject").addEventListener("click", saveProject);
 	document
 		.getElementById("exampleProject")
@@ -1060,10 +1057,10 @@ function saveProject() {
 		field: document.getElementById("fieldInput").value.trim(),
 		journal: document.getElementById("journalInput").value.trim(),
 		context: document.getElementById("contextInput").value.trim(),
-		knownTheories: document.getElementById("theoryInput").value.trim(),
-		population: document.getElementById("populationInput").value.trim(),
-		dataMode: document.getElementById("dataModeInput").value.trim(),
-		ethics: document.getElementById("ethicsInput").value.trim(),
+		knownTheories: inputValue("theoryInput"),
+		population: inputValue("populationInput"),
+		dataMode: inputValue("dataModeInput"),
+		ethics: inputValue("ethicsInput"),
 	};
 	record(
 		"project",
@@ -1120,40 +1117,17 @@ function renderDashboard() {
 	const approved = Object.values(state.decisions).filter(
 		(decision) => decision.status === "approved",
 	).length;
-	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Project dashboard</p><h2>${escapeHtml(state.project.title)}</h2><p>${escapeHtml(state.project.description || "No research problem defined yet.")}</p><div class="metric-grid"><div><strong>${generated}/${totalAgents}</strong><span>agents run</span></div><div><strong>${approved}</strong><span>approved outputs</span></div><div><strong>${state.documents.length}</strong><span>documents</span></div><div><strong>${state.references.length}</strong><span>sources</span></div></div></section><section class="card"><p class="eyebrow">System architecture</p><table><thead><tr><th>Component</th><th>Implemented role</th></tr></thead><tbody>${[
-		[
-			"Project Workspace",
-			"Stores project details, documents, references, outputs, scores, and decisions in local browser storage.",
-		],
-		[
-			"Workflow Orchestrator",
-			"Runs individual agents or full phase workflows and records provenance.",
-		],
-		[
-			"Agent Modules",
-			"Sixteen bounded agents aligned to PRD functional requirements; each uses a configured LLM provider or deterministic fallback.",
-		],
-		[
-			"Provider APIs",
-			"Accepts user-supplied OpenAI-compatible and Elsevier credentials stored locally in this browser.",
-		],
-		[
-			"Source Verifier",
-			"Tracks references, excerpts, verification status, and citation warnings.",
-		],
-		[
-			"Provenance Logger",
-			"Records prompts, model version, sources, outputs, human edits, decisions, and export history.",
-		],
-		[
-			"Export Layer",
-			"Produces Markdown, JSON provenance, CSV item tables, design memos, refinement memos, and GenAI-use appendices.",
-		],
-	]
-		.map((row) => `<tr><td>${row[0]}</td><td>${row[1]}</td></tr>`)
-		.join(
-			"",
-		)}</tbody></table></section><section class="card agent-zone"><p class="eyebrow">Provider status</p><p>${escapeHtml(state.providerSettings.lastStatus)}</p></section><section class="card agent-zone"><p class="eyebrow">Human authority principle</p><p>Agentic AI supports synthesis, generation, comparison, critique, and documentation; human researchers retain scholarly judgement and accountability.</p></section>`;
+	view.innerHTML = `<section class="card ribbon overview-card"><p class="eyebrow">Project overview</p><h2>${escapeHtml(state.project.title)}</h2><p>${escapeHtml(state.project.description || "No research problem defined yet.")}</p><div class="metric-grid"><button type="button" class="metric-link" data-target="conceptualisation"><strong>${generated}/${totalAgents}</strong><span>agents run</span></button><button type="button" class="metric-link" data-target="review"><strong>${approved}</strong><span>approved outputs</span></button><button type="button" class="metric-link" data-target="assets"><strong>${state.documents.length}</strong><span>documents</span></button><button type="button" class="metric-link" data-target="assets"><strong>${state.references.length}</strong><span>sources</span></button></div></section><section class="card"><p class="eyebrow">Workflow</p><h3>Four phase research pipeline</h3><p class="muted">Move left to right. Each phase contains four bounded agents and a human checkpoint.</p><div class="phase-summary-grid">${phaseDefinitions.map((phase) => `<button type="button" class="phase-summary" data-target="${phase.id}"><span>${phase.short}</span><strong>${phase.title}</strong><small>${phase.agents.filter((agentId) => state.outputs[agentId]).length}/${phase.agents.length} generated</small></button>`).join("")}</div></section><section class="card agent-zone"><p class="eyebrow">Provider status</p><p>${escapeHtml(state.providerSettings.lastStatus)}</p></section>`;
+	view.querySelectorAll("[data-target]").forEach((button) => {
+		button.addEventListener("click", () => show(button.dataset.target));
+	});
+}
+
+function renderAssets() {
+	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Research assets</p><h2>Documents, sources, and providers</h2><p class="muted">Keep the main workflow calm. Use these focused panels only when you need to add material, connect providers, or verify sources.</p><div class="asset-grid"><button type="button" class="asset-card" data-target="documents"><span>${state.documents.length}</span><strong>Documents</strong><small>Upload notes, tables, and excerpts</small></button><button type="button" class="asset-card" data-target="sources"><span>${state.references.length}</span><strong>Sources</strong><small>Verify references and run Elsevier discovery</small></button><button type="button" class="asset-card" data-target="settings"><span>${statusMark("settings") || "—"}</span><strong>Providers</strong><small>Configure LLM and Elsevier keys</small></button></div></section>`;
+	document.querySelectorAll(".asset-card").forEach((button) => {
+		button.addEventListener("click", () => show(button.dataset.target));
+	});
 }
 
 function renderSettings() {
@@ -1267,7 +1241,7 @@ function addReference() {
 
 function renderPhase(id) {
 	const phase = phaseDefinitions.find((item) => item.id === id);
-	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">${phase.short}</p><h2>${phase.title}</h2><p>${phase.purpose}</p><div class="split-grid"><div><h3>Inputs</h3><ul>${phase.inputs.map((input) => `<li>${input}</li>`).join("")}</ul></div><div><h3>Outputs</h3><ul>${phase.outputs.map((output) => `<li>${output}</li>`).join("")}</ul></div></div><div class="button-row"><button type="button" id="runPhase">Run full phase workflow</button><button type="button" class="secondary" id="requestPhaseCritique">Request phase critique</button></div></section><section class="card human-zone"><p class="eyebrow">End-of-phase checkpoint</p><h3>${phase.short} approval</h3><p><span class="pill">${state.phaseDecisions[id]?.status || "pending"}</span> ${escapeHtml(state.phaseDecisions[id]?.comment || "")}</p><div class="button-row"><button type="button" id="approvePhase">Approve phase package</button><button type="button" class="secondary" id="revisePhase">Request phase revision</button></div></section><section class="agent-grid">${phase.agents.map(renderAgentCard).join("")}</section>`;
+	view.innerHTML = `<section class="card ribbon focus-card"><p class="eyebrow">${phase.short}</p><h2>${phase.title}</h2><p>${phase.purpose}</p><div class="button-row"><button type="button" id="runPhase">Run phase workflow</button><button type="button" class="secondary" id="requestPhaseCritique">Request critique</button></div><details class="quiet-details phase-brief"><summary>Inputs and outputs</summary><div class="split-grid"><div><h3>Inputs</h3><ul>${phase.inputs.map((input) => `<li>${input}</li>`).join("")}</ul></div><div><h3>Outputs</h3><ul>${phase.outputs.map((output) => `<li>${output}</li>`).join("")}</ul></div></div></details></section><section class="agent-list">${phase.agents.map(renderAgentCard).join("")}</section><section class="card human-zone phase-checkpoint"><p class="eyebrow">Phase checkpoint</p><h3>${phase.short} approval</h3><p><span class="pill">${state.phaseDecisions[id]?.status || "pending"}</span> ${escapeHtml(state.phaseDecisions[id]?.comment || "")}</p><div class="button-row"><button type="button" id="approvePhase">Approve phase package</button><button type="button" class="secondary" id="revisePhase">Request revision</button></div></section>`;
 	document
 		.getElementById("runPhase")
 		.addEventListener("click", () => runPhase(id));
@@ -1289,7 +1263,7 @@ function renderAgentCard(agentId) {
 	const agent = agentCatalog[agentId];
 	const output = state.outputs[agentId];
 	const decision = state.decisions[agentId]?.status || "not run";
-	return `<article class="card agent-card ${output ? "has-output" : ""}"><p class="eyebrow">${escapeHtml(agent.role)}</p><h3>${escapeHtml(agent.name)}</h3><details><summary>Functional requirements</summary><ul>${agent.requirements.map((requirement) => `<li>${escapeHtml(requirement)}</li>`).join("")}</ul></details><div class="button-row"><button type="button" data-run="${agentId}">Run agent</button><button type="button" class="secondary" data-alt="${agentId}">Alternative</button><button type="button" class="secondary" data-review="${agentId}">Select for review</button></div><p><span class="pill">${escapeHtml(decision)}</span></p>${output ? renderOutput(agentId, output) : ""}</article>`;
+	return `<article class="card agent-card ${output ? "has-output" : ""}"><div class="agent-card-header"><div><p class="eyebrow">${escapeHtml(agent.role)}</p><h3>${escapeHtml(agent.name)}</h3></div><span class="pill">${escapeHtml(decision)}</span></div><details class="quiet-details"><summary>Functional requirements</summary><ul>${agent.requirements.map((requirement) => `<li>${escapeHtml(requirement)}</li>`).join("")}</ul></details><div class="button-row"><button type="button" data-run="${agentId}">Run agent</button><button type="button" class="secondary" data-review="${agentId}">Select for review</button><button type="button" class="secondary" data-alt="${agentId}">Alternative</button></div>${output ? renderOutput(agentId, output) : ""}</article>`;
 }
 
 function bindAgentButtons(agentId) {
@@ -1709,7 +1683,10 @@ function firstOutputInActivePhase() {
 }
 
 function renderReview() {
-	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Human Review & Approval Hub</p><h2>Mandatory checkpoints and decisions</h2><p>Every major agent output can be approved, rejected, revised, marked uncertain, sent for citation verification, or escalated for expert review. Each phase also has an end-of-phase approval checkpoint.</p><h3>Phase checkpoints</h3><table><thead><tr><th>Phase</th><th>Status</th><th>Comment</th><th>Timestamp</th></tr></thead><tbody>${phaseDefinitions.map((phase) => `<tr><td>${phase.short}: ${phase.title}</td><td><span class="pill">${state.phaseDecisions[phase.id]?.status || "pending"}</span></td><td>${escapeHtml(state.phaseDecisions[phase.id]?.comment || "—")}</td><td>${escapeHtml(state.phaseDecisions[phase.id]?.timestamp || "—")}</td></tr>`).join("")}</tbody></table><h3>Agent decisions</h3><table><thead><tr><th>Phase</th><th>Agent output</th><th>Decision</th><th>Human comment</th></tr></thead><tbody>${phaseDefinitions.flatMap((phase) => phase.agents.map((agentId) => `<tr><td>${phase.short}</td><td>${agentCatalog[agentId].name}</td><td><span class="pill">${state.decisions[agentId]?.status || "pending"}</span></td><td>${escapeHtml(state.decisions[agentId]?.comment || "—")}</td></tr>`)).join("")}</tbody></table></section>`;
+	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Review & export</p><h2>Final scholarly control</h2><p>Review decisions, score the package, and export the audit trail from one quiet terminal workspace.</p><div class="asset-grid"><button type="button" class="asset-card" data-target="evaluation"><span>${Object.keys(state.scores).length || "—"}</span><strong>Evaluation</strong><small>Score the research package</small></button><button type="button" class="asset-card" data-target="export"><span>${state.exportHistory.length || "—"}</span><strong>Export</strong><small>Download reports and provenance</small></button><button type="button" class="asset-card" data-target="sources"><span>${state.references.length}</span><strong>Sources</strong><small>Verify citations before publication</small></button></div></section><section class="card"><p class="eyebrow">Decision trail</p><details open class="quiet-details"><summary>Phase checkpoints</summary><table><thead><tr><th>Phase</th><th>Status</th><th>Comment</th><th>Timestamp</th></tr></thead><tbody>${phaseDefinitions.map((phase) => `<tr><td>${phase.short}: ${phase.title}</td><td><span class="pill">${state.phaseDecisions[phase.id]?.status || "pending"}</span></td><td>${escapeHtml(state.phaseDecisions[phase.id]?.comment || "—")}</td><td>${escapeHtml(state.phaseDecisions[phase.id]?.timestamp || "—")}</td></tr>`).join("")}</tbody></table></details><details class="quiet-details"><summary>Agent decisions</summary><table><thead><tr><th>Phase</th><th>Agent output</th><th>Decision</th><th>Human comment</th></tr></thead><tbody>${phaseDefinitions.flatMap((phase) => phase.agents.map((agentId) => `<tr><td>${phase.short}</td><td>${agentCatalog[agentId].name}</td><td><span class="pill">${state.decisions[agentId]?.status || "pending"}</span></td><td>${escapeHtml(state.decisions[agentId]?.comment || "—")}</td></tr>`)).join("")}</tbody></table></details></section>`;
+	view.querySelectorAll("[data-target]").forEach((button) => {
+		button.addEventListener("click", () => show(button.dataset.target));
+	});
 }
 
 function renderSources() {
