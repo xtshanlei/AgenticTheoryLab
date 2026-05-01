@@ -90,6 +90,16 @@ async function main() {
 		await page.click(`.asset-card[data-target="${target}"]`);
 	};
 	await page.click("#seedExample");
+	await page.click('[data-phase="conceptualisation"]');
+	await page.click('[data-run="phenomenon_definition"]');
+	await page.waitForFunction(() => {
+		const state = JSON.parse(localStorage.getItem("atl-state"));
+		return (
+			state.decisions.phenomenon_definition?.status === "blocked" &&
+			!state.outputs.phenomenon_definition &&
+			state.providerSettings.lastStatus.includes("Live LLM provider required")
+		);
+	});
 	await openAsset("settings");
 	await page.fill("#llmProviderName", "Mock OpenAI-compatible");
 	await page.fill("#llmEndpoint", `${origin}/mock-llm`);
@@ -138,7 +148,11 @@ async function main() {
 	await page.click('[data-run="reference_mapping"]');
 	await page.waitForFunction(() => {
 		const state = JSON.parse(localStorage.getItem("atl-state"));
-		return state.providerSettings.lastStatus.includes("HTTP 500");
+		return (
+			state.providerSettings.lastStatus.includes("HTTP 500") &&
+			state.decisions.reference_mapping?.status === "failed" &&
+			!state.outputs.reference_mapping
+		);
 	});
 	await openAsset("settings");
 	await page.fill("#llmEndpoint", `${origin}/mock-llm-text`);
@@ -274,6 +288,24 @@ async function main() {
 					entry.configuration?.provider?.elsevier?.apiKey === "[configured]",
 			);
 		}),
+		noConfigBlocked: await page.evaluate(() => {
+			const state = JSON.parse(localStorage.getItem("atl-state"));
+			return state.provenance.some(
+				(entry) =>
+					entry.human_decision === "blocked" &&
+					entry.model === "no-live-llm-output" &&
+					entry.configuration?.execution === "llm-required",
+			);
+		}),
+		providerFailureBlocked: await page.evaluate(() => {
+			const state = JSON.parse(localStorage.getItem("atl-state"));
+			return state.provenance.some(
+				(entry) =>
+					entry.human_decision === "failed" &&
+					entry.model === "no-live-llm-output" &&
+					entry.output_summary.includes("No fallback output"),
+			);
+		}),
 		elsevierReference: await page.evaluate(() =>
 			JSON.parse(localStorage.getItem("atl-state")).references.some(
 				(reference) => reference.source.includes("10.0000/mock-agentic-theory"),
@@ -316,6 +348,14 @@ async function main() {
 		throw new Error("LLM provider model was not recorded in provenance.");
 	if (!result.redactedKeys)
 		throw new Error("Provider keys were not redacted in provenance.");
+	if (!result.noConfigBlocked)
+		throw new Error(
+			"No-config agent run was not blocked as live-LLM required.",
+		);
+	if (!result.providerFailureBlocked)
+		throw new Error(
+			"Provider failure generated fallback output instead of failing closed.",
+		);
 	if (!result.elsevierReference)
 		throw new Error("Mock Elsevier discovery did not add a source reference.");
 	if (!result.genericProviderErrors)

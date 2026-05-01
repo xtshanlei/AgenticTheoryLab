@@ -850,7 +850,7 @@ const defaultState = {
 			query: "",
 		},
 		lastStatus:
-			"No provider configured. Agents use deterministic local fallback.",
+			"No LLM provider configured. Live agents are blocked until provider credentials are added.",
 	},
 	provenance: [],
 	documents: [],
@@ -955,8 +955,8 @@ function renderNav() {
 	const items = [
 		{ id: "dashboard", title: "Overview" },
 		{ id: "project", title: "Project" },
+		{ id: "workflow", title: "Workflow" },
 		{ id: "assets", title: "Research Assets" },
-		...phaseDefinitions.map((phase) => ({ id: phase.id, title: phase.short })),
 		{ id: "review", title: "Review & Export" },
 	];
 	document.getElementById("nav").innerHTML = items
@@ -978,6 +978,10 @@ function statusMark(id) {
 		return "✓";
 	if (id === "assets")
 		return String(state.documents.length + state.references.length || "");
+	if (id === "workflow") {
+		const generated = Object.keys(state.outputs).length;
+		return generated ? `${generated}/16` : "";
+	}
 	if (id === "settings" || id === "assets") {
 		if (hasLlmConfig() && hasElsevierConfig()) return "LLM+ELS";
 		if (hasLlmConfig()) return "LLM";
@@ -1029,6 +1033,7 @@ function show(target) {
 	save();
 	if (target === "project") renderProject();
 	else if (target === "dashboard") renderDashboard();
+	else if (target === "workflow") renderWorkflow();
 	else if (target === "assets") renderAssets();
 	else if (target === "settings") renderSettings();
 	else if (target === "documents") renderDocuments();
@@ -1037,6 +1042,13 @@ function show(target) {
 	else if (target === "evaluation") renderEvaluation();
 	else if (target === "export") renderExport();
 	else renderPhase(target);
+}
+
+function renderWorkflow() {
+	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Workflow</p><h2>Four phase research pipeline</h2><p class="muted">Choose a phase, run live LLM agents, then review each output. The main navigation stays short; the full phase workflow remains here and in the phase stepper.</p><div class="phase-summary-grid">${phaseDefinitions.map((phase) => `<button type="button" class="phase-summary" data-target="${phase.id}"><span>${phase.short}</span><strong>${phase.title}</strong><small>${phase.agents.filter((agentId) => state.outputs[agentId]).length}/${phase.agents.length} live outputs</small></button>`).join("")}</div></section><section class="card agent-zone"><p class="eyebrow">Live agent status</p><p>${escapeHtml(state.providerSettings.lastStatus)}</p><div class="button-row"><button type="button" data-target="settings">Configure providers</button></div></section>`;
+	view.querySelectorAll("[data-target]").forEach((button) => {
+		button.addEventListener("click", () => show(button.dataset.target));
+	});
 }
 
 function renderProject() {
@@ -1281,7 +1293,8 @@ function bindAgentButtons(agentId) {
 async function runPhase(phaseId) {
 	for (const agentId of phaseDefinitions.find((phase) => phase.id === phaseId)
 		.agents) {
-		await runAgent(agentId);
+		const completed = await runAgent(agentId);
+		if (!completed) break;
 	}
 	show(phaseId);
 }
@@ -1289,28 +1302,43 @@ async function runPhase(phaseId) {
 async function runAgent(agentId) {
 	const agent = agentCatalog[agentId];
 	const fallbackOutput = buildDeterministicOutput(agent);
-	let output = fallbackOutput;
-	let executionMode = "deterministic-fallback";
-	let validationNotes = [];
 
-	if (hasLlmConfig()) {
-		try {
-			if (shouldConfirmExternalLlmSend() && !confirmExternalLlmSend()) {
-				validationNotes = [
-					"External LLM send was cancelled by the researcher; deterministic fallback used.",
-				];
-				state.providerSettings.lastStatus = validationNotes[0];
-			} else {
-				output = await callLlmAgent(agentId, agent, fallbackOutput);
-				executionMode = "llm-provider";
-				state.providerSettings.lastStatus = `LLM agent completed via ${state.providerSettings.llm.providerName}.`;
-			}
-		} catch (error) {
-			validationNotes = [
-				`LLM provider failed; deterministic fallback used. ${safeErrorMessage(error)}`,
-			];
-			state.providerSettings.lastStatus = validationNotes[0];
-		}
+	if (!hasLlmConfig()) {
+		blockAgentRun(
+			agentId,
+			agent,
+			"Live LLM provider required before agents can run. Add an OpenAI-compatible endpoint, API key, and model in Research Assets → Providers.",
+			"blocked",
+		);
+		show(phaseForAgent(agentId).id);
+		return false;
+	}
+
+	if (shouldConfirmExternalLlmSend() && !confirmExternalLlmSend()) {
+		blockAgentRun(
+			agentId,
+			agent,
+			"External LLM send was cancelled by the researcher. No agent output was generated.",
+			"cancelled",
+		);
+		show(phaseForAgent(agentId).id);
+		return false;
+	}
+
+	let output;
+	const validationNotes = [];
+	try {
+		output = await callLlmAgent(agentId, agent, fallbackOutput);
+		state.providerSettings.lastStatus = `Live LLM agent completed via ${state.providerSettings.llm.providerName}.`;
+	} catch (error) {
+		blockAgentRun(
+			agentId,
+			agent,
+			`Live LLM provider failed. No fallback output was generated. ${safeErrorMessage(error)}`,
+			"failed",
+		);
+		show(phaseForAgent(agentId).id);
+		return false;
 	}
 
 	state.outputs[agentId] = {
@@ -1334,12 +1362,9 @@ async function runAgent(agentId) {
 		{
 			fullOutput: state.outputs[agentId],
 			agentPrompt: buildAgentPrompt(agentId, agent, fallbackOutput),
-			model:
-				executionMode === "llm-provider"
-					? state.providerSettings.llm.model
-					: "deterministic-full-static-agent-v2",
+			model: state.providerSettings.llm.model,
 			configuration: {
-				execution: executionMode,
+				execution: "llm-provider",
 				provider: redactedProviderSettings(),
 			},
 			validationNotes,
@@ -1347,10 +1372,42 @@ async function runAgent(agentId) {
 	);
 	save();
 	show(phaseForAgent(agentId).id);
+	return true;
+}
+
+function blockAgentRun(agentId, agent, message, decision) {
+	state.providerSettings.lastStatus = message;
+	state.decisions[agentId] = { status: decision, comment: message };
+	record(
+		phaseForAgent(agentId).id,
+		agent.name,
+		state.project.description || "IS research problem",
+		message,
+		decision,
+		"",
+		state.references.map((reference) => reference.title),
+		{
+			agentPrompt: buildAgentPrompt(
+				agentId,
+				agent,
+				buildDeterministicOutput(agent),
+			),
+			model: "no-live-llm-output",
+			configuration: {
+				execution: "llm-required",
+				provider: redactedProviderSettings(),
+			},
+			validationNotes: [message],
+		},
+	);
+	save();
 }
 
 async function requestAlternative(agentId) {
-	if (!state.outputs[agentId]) await runAgent(agentId);
+	if (!state.outputs[agentId]) {
+		const completed = await runAgent(agentId);
+		if (!completed) return;
+	}
 	const agent = agentCatalog[agentId];
 	const alternative = `Alternative framing: treat ${agent.outputTitle.toLowerCase()} as a comparison set rather than a final recommendation; require human adjudication before downstream reuse.`;
 	state.outputs[agentId].alternatives.unshift(alternative);
@@ -1404,7 +1461,10 @@ function phaseCheckpoint(phaseId, status) {
 async function critiquePhase(phaseId) {
 	const phase = phaseDefinitions.find((item) => item.id === phaseId);
 	for (const agentId of phase.agents) {
-		if (!state.outputs[agentId]) await runAgent(agentId);
+		if (!state.outputs[agentId]) {
+			const completed = await runAgent(agentId);
+			if (!completed) return;
+		}
 		state.outputs[agentId].critique =
 			`Critique: verify source grounding, inspect construct drift, and require human approval before using ${agentCatalog[agentId].outputTitle.toLowerCase()} in later phases.`;
 	}
@@ -1526,7 +1586,7 @@ function providerStatusMessage() {
 		return `LLM provider configured: ${state.providerSettings.llm.providerName} / ${state.providerSettings.llm.model}`;
 	}
 	if (hasElsevierConfig()) return "Elsevier discovery provider configured.";
-	return "No provider configured. Agents use deterministic local fallback.";
+	return "No LLM provider configured. Live agents are blocked until provider credentials are added.";
 }
 
 function shouldConfirmExternalLlmSend() {
@@ -1974,8 +2034,8 @@ function sectionMarkdown(agentIds) {
 function buildAppendix() {
 	const providerMode = hasLlmConfig()
 		? `${state.providerSettings.llm.providerName} / ${state.providerSettings.llm.model}`
-		: "deterministic local fallback";
-	return `## GenAI-use appendix\n\nAgenticTheoryLab used ${providerMode} to generate candidate theory-construction outputs. When an LLM provider is configured, agent prompts transmit project fields, reference text, and document snippets to the configured endpoint. The system recorded project inputs, agent outputs, model identifiers, sources used, retrieved passages, human approvals, revisions, rejected alternatives, citation-verification requests, expert-review escalations, provider configuration with redacted keys, and export history. Exported files may contain sensitive project materials and should be shared only through approved research channels. Human researchers retain final scholarly judgement and publication accountability.\n\nExports generated: ${state.exportHistory.map((item) => item.name).join(", ") || "none yet"}.`;
+		: "no live LLM provider configured";
+	return `## GenAI-use appendix\n\nAgenticTheoryLab used ${providerMode} to generate candidate theory-construction outputs. Agent outputs require a configured live LLM provider; missing or failing providers are recorded as blocked or failed runs rather than replaced with deterministic agent output. When an LLM provider is configured, agent prompts transmit project fields, reference text, and document snippets to the configured endpoint. The system recorded project inputs, agent outputs, model identifiers, sources used, retrieved passages, human approvals, revisions, rejected alternatives, citation-verification requests, expert-review escalations, provider configuration with redacted keys, and export history. Exported files may contain sensitive project materials and should be shared only through approved research channels. Human researchers retain final scholarly judgement and publication accountability.\n\nExports generated: ${state.exportHistory.map((item) => item.name).join(", ") || "none yet"}.`;
 }
 
 function buildDecisionTrail() {
