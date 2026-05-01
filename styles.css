@@ -7,6 +7,7 @@
 	--on-surface: #1b1b1d;
 	--on-variant: #45464d;
 	--outline: #c6c6cd;
+	--outline-strong: #76777d;
 	--navy: #0f172a;
 	--teal: #0f766e;
 	--teal-soft: #f0fdfa;
@@ -25,6 +26,10 @@ body {
 	background: var(--surface);
 	color: var(--on-surface);
 	font-family: "Public Sans", system-ui, sans-serif;
+}
+
+.muted {
+	color: var(--on-variant);
 }
 
 h1,
@@ -51,7 +56,7 @@ p {
 .sidebar {
 	position: fixed;
 	inset: 0 auto 0 0;
-	width: 256px;
+	width: 224px;
 	background: var(--surface-lowest);
 	border-right: 1px solid var(--outline);
 	display: flex;
@@ -60,7 +65,7 @@ p {
 }
 
 .brand-block {
-	padding: 28px 24px;
+	padding: 24px 20px;
 	border-bottom: 1px solid var(--outline);
 }
 .brand-block strong {
@@ -89,7 +94,7 @@ p {
 }
 
 #nav {
-	padding: 12px;
+	padding: 10px;
 	flex: 1;
 }
 .nav-item {
@@ -97,7 +102,7 @@ p {
 	border: 0;
 	background: transparent;
 	text-align: left;
-	padding: 12px 14px;
+	padding: 10px 12px;
 	margin: 2px 0;
 	border-radius: 4px;
 	color: var(--on-variant);
@@ -114,7 +119,7 @@ p {
 }
 
 .authority-note {
-	margin: 16px;
+	margin: 12px;
 	padding: 14px;
 	background: #fff7ed;
 	border: 1px solid #fed7aa;
@@ -124,7 +129,7 @@ p {
 }
 
 .shell {
-	margin-left: 256px;
+	margin-left: 224px;
 	padding: 32px;
 	max-width: 1440px;
 }
@@ -221,10 +226,7 @@ p {
 }
 
 .workspace {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) 360px;
-	gap: 24px;
-	align-items: start;
+	display: block;
 }
 .main-panel {
 	display: grid;
@@ -243,17 +245,24 @@ p {
 	background: var(--surface-lowest);
 	border-color: #d6b3bd;
 }
-.agent-grid {
+.agent-grid,
+.agent-list {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 24px;
+	grid-template-columns: 1fr;
+	gap: 16px;
 }
 .agent-card {
 	display: grid;
-	gap: 14px;
+	gap: 12px;
 	position: relative;
 	min-width: 0;
 	overflow: hidden;
+}
+.agent-card-header {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: flex-start;
 }
 .agent-card.has-output {
 	border-color: #99f6e4;
@@ -293,6 +302,61 @@ p {
 	letter-spacing: 0.06em;
 	font-weight: 700;
 }
+.metric-link,
+.asset-card,
+.phase-summary {
+	border: 1px solid var(--outline);
+	background: var(--surface-low);
+	color: var(--on-surface);
+	text-align: left;
+	letter-spacing: normal;
+	font-weight: 400;
+	border-radius: 6px;
+	padding: 16px;
+}
+.metric-link strong,
+.asset-card span {
+	display: block;
+	font-family: "Newsreader", Georgia, serif;
+	font-size: 2rem;
+	font-weight: 600;
+}
+.metric-link span,
+.asset-card small,
+.phase-summary small {
+	display: block;
+	color: var(--on-variant);
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-weight: 700;
+	margin-top: 6px;
+}
+.phase-summary-grid,
+.asset-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 18px;
+}
+.asset-grid {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.phase-summary span {
+	color: var(--teal);
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+.phase-summary strong,
+.asset-card strong {
+	display: block;
+	margin-top: 8px;
+	font-family: "Newsreader", Georgia, serif;
+	font-size: 1.25rem;
+	font-weight: 600;
+}
 .list-card {
 	border: 1px solid var(--outline);
 	background: var(--surface-low);
@@ -324,6 +388,15 @@ details {
 	border-radius: 6px;
 	padding: 10px 12px;
 	background: var(--surface-low);
+}
+.quiet-details {
+	background: var(--surface-lowest);
+}
+.phase-brief {
+	margin-top: 16px;
+}
+.nested-form {
+	margin-top: 16px;
 }
 summary {
 	cursor: pointer;
@@ -401,6 +474,9 @@ button:hover {
 	flex-wrap: wrap;
 	margin-top: 12px;
 }
+.compact-actions {
+	margin-top: 8px;
+}
 .full {
 	width: 100%;
 	margin-top: 8px;
@@ -452,6 +528,21 @@ td {
 	padding: 10px;
 	font-size: 13px;
 }
+.review-dock {
+	margin-top: 24px;
+}
+.review-layout {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
+}
+.review-dock textarea {
+	min-height: 82px;
+}
+.provenance-drawer {
+	margin-top: 16px;
+}
 .export-box {
 	white-space: pre-wrap;
 	max-height: 420px;
@@ -477,8 +568,12 @@ td {
 	.hero,
 	.form-grid,
 	.agent-grid,
+	.agent-list,
 	.split-grid,
-	.metric-grid {
+	.metric-grid,
+	.phase-summary-grid,
+	.asset-grid,
+	.review-layout {
 		grid-template-columns: 1fr;
 	}
 	.stepper {

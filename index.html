@@ -32,7 +32,7 @@
     <main class="shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Human-in-the-loop multi-agent laboratory</p>
+          <p class="eyebrow">Institutional research workspace</p>
           <h1>AgenticTheoryLab</h1>
         </div>
         <button type="button" class="secondary" id="seedExample">Load example project</button>
@@ -43,7 +43,7 @@
           <p class="eyebrow">Project workspace</p>
           <h2 id="projectTitle">Untitled theory-construction project</h2>
           <p id="projectDescription">
-            Define a project, run the full sixteen-agent workflow, review every output, and export an auditable research package.
+            Define the study, run each phase, review the evidence, and export an auditable research package.
           </p>
         </div>
         <div class="stats">
@@ -56,27 +56,37 @@
 
       <section class="workspace">
         <div class="main-panel" id="view"></div>
-        <aside class="side-panel">
-          <section class="card human-zone">
-            <p class="eyebrow">Human review checkpoint</p>
-            <h3>Decision controls</h3>
-            <textarea id="reviewComment" placeholder="Add scholarly judgement, revisions, uncertainty notes, or citation-verification requests."></textarea>
-            <div class="button-row">
+      </section>
+
+      <section class="review-dock card human-zone">
+        <div class="review-layout">
+          <div>
+            <p class="eyebrow">Human review</p>
+            <h3>Decision checkpoint</h3>
+            <p>Use this after selecting an agent output or phase package.</p>
+          </div>
+          <div>
+            <textarea id="reviewComment" placeholder="Add scholarly judgement, revision notes, or citation-verification requests."></textarea>
+            <div class="button-row compact-actions">
               <button type="button" id="approveBtn">Approve</button>
               <button type="button" class="secondary" id="reviseBtn">Revise</button>
               <button type="button" class="critical" id="rejectBtn">Reject</button>
             </div>
-            <button type="button" class="secondary full" id="uncertainBtn">Mark as uncertain</button>
-            <button type="button" class="secondary full" id="alternativesBtn">Request alternatives</button>
-            <button type="button" class="secondary full" id="citationBtn">Request citation verification</button>
-            <button type="button" class="secondary full" id="expertBtn">Escalate for expert review</button>
-          </section>
-
-          <section class="card agent-zone">
-            <p class="eyebrow">Provenance live log</p>
-            <div id="provenancePreview" class="log-list"></div>
-          </section>
-        </aside>
+            <details class="quiet-details">
+              <summary>More review actions</summary>
+              <div class="button-row">
+                <button type="button" class="secondary" id="uncertainBtn">Mark uncertain</button>
+                <button type="button" class="secondary" id="alternativesBtn">Request alternatives</button>
+                <button type="button" class="secondary" id="citationBtn">Request citation verification</button>
+                <button type="button" class="secondary" id="expertBtn">Escalate for expert review</button>
+              </div>
+            </details>
+          </div>
+        </div>
+        <details class="quiet-details provenance-drawer">
+          <summary>Provenance live log</summary>
+          <div id="provenancePreview" class="log-list"></div>
+        </details>
       </section>
     </main>
 
