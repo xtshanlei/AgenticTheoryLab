@@ -836,6 +836,22 @@ const defaultState = {
 	outputs: {},
 	decisions: {},
 	phaseDecisions: {},
+	providerSettings: {
+		llm: {
+			providerName: "OpenAI-compatible",
+			endpoint: "",
+			apiKey: "",
+			model: "gpt-4o-mini",
+		},
+		elsevier: {
+			endpoint: "https://api.elsevier.com/content/search/scopus",
+			apiKey: "",
+			instToken: "",
+			query: "",
+		},
+		lastStatus:
+			"No provider configured. Agents use deterministic local fallback.",
+	},
 	provenance: [],
 	documents: [],
 	references: [],
@@ -856,6 +872,18 @@ function migrateState(saved) {
 		version: 3,
 		project: { ...defaultState.project, ...saved.project },
 		phaseDecisions: saved.phaseDecisions || {},
+		providerSettings: {
+			...defaultState.providerSettings,
+			...(saved.providerSettings || {}),
+			llm: {
+				...defaultState.providerSettings.llm,
+				...(saved.providerSettings?.llm || {}),
+			},
+			elsevier: {
+				...defaultState.providerSettings.elsevier,
+				...(saved.providerSettings?.elsevier || {}),
+			},
+		},
 	};
 }
 
@@ -879,7 +907,7 @@ function record(
 		phase,
 		agent,
 		input,
-		model: "deterministic-full-static-agent-v2",
+		model: details.model || "deterministic-full-static-agent-v2",
 		sources_used: [
 			"requirements.md",
 			"Stitch project 13154548682289785713",
@@ -925,6 +953,7 @@ function renderNav() {
 	const items = [
 		{ id: "project", title: "Create Project" },
 		{ id: "dashboard", title: "Dashboard" },
+		{ id: "settings", title: "Provider APIs" },
 		{ id: "documents", title: "Documents" },
 		...phaseDefinitions.map((phase) => ({ id: phase.id, title: phase.short })),
 		{ id: "review", title: "Review Hub" },
@@ -951,6 +980,12 @@ function statusMark(id) {
 		return "✓";
 	if (id === "documents")
 		return String(state.documents.length + state.references.length || "");
+	if (id === "settings") {
+		if (hasLlmConfig() && hasElsevierConfig()) return "LLM+ELS";
+		if (hasLlmConfig()) return "LLM";
+		if (hasElsevierConfig()) return "ELS";
+		return "";
+	}
 	const phase = phaseDefinitions.find((item) => item.id === id);
 	if (!phase) return "";
 	const approved = phase.agents.filter(
@@ -996,6 +1031,7 @@ function show(target) {
 	save();
 	if (target === "project") renderProject();
 	else if (target === "dashboard") renderDashboard();
+	else if (target === "settings") renderSettings();
 	else if (target === "documents") renderDocuments();
 	else if (target === "review") renderReview();
 	else if (target === "sources") renderSources();
@@ -1093,7 +1129,11 @@ function renderDashboard() {
 		],
 		[
 			"Agent Modules",
-			"Sixteen bounded deterministic agents aligned to PRD functional requirements.",
+			"Sixteen bounded agents aligned to PRD functional requirements; each uses a configured LLM provider or deterministic fallback.",
+		],
+		[
+			"Provider APIs",
+			"Accepts user-supplied OpenAI-compatible and Elsevier credentials stored locally in this browser.",
 		],
 		[
 			"Source Verifier",
@@ -1111,7 +1151,63 @@ function renderDashboard() {
 		.map((row) => `<tr><td>${row[0]}</td><td>${row[1]}</td></tr>`)
 		.join(
 			"",
-		)}</tbody></table></section><section class="card agent-zone"><p class="eyebrow">Human authority principle</p><p>Agentic AI supports synthesis, generation, comparison, critique, and documentation; human researchers retain scholarly judgement and accountability.</p></section>`;
+		)}</tbody></table></section><section class="card agent-zone"><p class="eyebrow">Provider status</p><p>${escapeHtml(state.providerSettings.lastStatus)}</p></section><section class="card agent-zone"><p class="eyebrow">Human authority principle</p><p>Agentic AI supports synthesis, generation, comparison, critique, and documentation; human researchers retain scholarly judgement and accountability.</p></section>`;
+}
+
+function renderSettings() {
+	const { llm, elsevier } = state.providerSettings;
+	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Provider APIs</p><h2>Connect real agent providers</h2><p>Enter your own LLM provider and Elsevier developer credentials. Keys are stored only in this browser's local storage for this static GitHub Pages app; use a backend or proxy if your institution requires protected secret storage or if a provider blocks browser CORS.</p><div class="form-grid"><label>LLM provider name<input id="llmProviderName" value="${escapeAttr(llm.providerName)}"></label><label>Model<input id="llmModel" value="${escapeAttr(llm.model)}"></label><label class="wide">OpenAI-compatible chat completions endpoint<input id="llmEndpoint" placeholder="https://api.openai.com/v1/chat/completions" value="${escapeAttr(llm.endpoint)}"></label><label class="wide">LLM API key<input id="llmApiKey" type="password" autocomplete="off" value="${escapeAttr(llm.apiKey)}"></label><label class="wide">Elsevier Scopus Search endpoint<input id="elsevierEndpoint" value="${escapeAttr(elsevier.endpoint)}"></label><label>Elsevier API key<input id="elsevierApiKey" type="password" autocomplete="off" value="${escapeAttr(elsevier.apiKey)}"></label><label>Elsevier institution token (optional)<input id="elsevierInstToken" type="password" autocomplete="off" value="${escapeAttr(elsevier.instToken)}"></label><label class="wide">Default Elsevier query<input id="elsevierQuerySetting" value="${escapeAttr(elsevier.query || state.project.description)}"></label></div><div class="button-row"><button type="button" id="saveProviders">Save providers locally</button><button type="button" class="secondary" id="clearProviders">Clear provider keys</button></div><p class="warning">Static-site limitation: API keys entered here are available to your browser session. For shared deployments, use short-lived keys, an institution-approved API gateway, or a private backend.</p></section>`;
+	document
+		.getElementById("saveProviders")
+		.addEventListener("click", saveProviderSettings);
+	document
+		.getElementById("clearProviders")
+		.addEventListener("click", clearProviderSettings);
+}
+
+function saveProviderSettings() {
+	state.providerSettings.llm = {
+		providerName: inputValue("llmProviderName") || "OpenAI-compatible",
+		endpoint: inputValue("llmEndpoint"),
+		apiKey: inputValue("llmApiKey"),
+		model: inputValue("llmModel") || "gpt-4o-mini",
+	};
+	state.providerSettings.elsevier = {
+		endpoint:
+			inputValue("elsevierEndpoint") ||
+			"https://api.elsevier.com/content/search/scopus",
+		apiKey: inputValue("elsevierApiKey"),
+		instToken: inputValue("elsevierInstToken"),
+		query: inputValue("elsevierQuerySetting"),
+	};
+	state.providerSettings.lastStatus = hasLlmConfig()
+		? `LLM provider configured: ${state.providerSettings.llm.providerName} / ${state.providerSettings.llm.model}`
+		: "No LLM provider configured. Agents use deterministic local fallback.";
+	record(
+		"settings",
+		"Provider Settings",
+		"Save local provider configuration",
+		state.providerSettings.lastStatus,
+		"saved",
+		"",
+		[],
+		{ configuration: redactedProviderSettings() },
+	);
+	save();
+	renderSettings();
+}
+
+function clearProviderSettings() {
+	state.providerSettings = structuredClone(defaultState.providerSettings);
+	record(
+		"settings",
+		"Provider Settings",
+		"Clear provider credentials",
+		"Provider credentials cleared from local state",
+		"cleared",
+	);
+	save();
+	renderSettings();
 }
 
 function renderDocuments() {
@@ -1141,6 +1237,7 @@ async function addDocument() {
 		"Add document",
 		`Added document: ${doc.title || doc.type}`,
 		"saved",
+		"",
 		[],
 		{ fullOutput: doc },
 	);
@@ -1207,21 +1304,38 @@ function bindAgentButtons(agentId) {
 		.addEventListener("click", () => selectForReview(agentId));
 }
 
-function runPhase(phaseId) {
-	phaseDefinitions
-		.find((phase) => phase.id === phaseId)
-		.agents.forEach(runAgent);
+async function runPhase(phaseId) {
+	for (const agentId of phaseDefinitions.find((phase) => phase.id === phaseId)
+		.agents) {
+		await runAgent(agentId);
+	}
 	show(phaseId);
 }
 
-function runAgent(agentId) {
+async function runAgent(agentId) {
 	const agent = agentCatalog[agentId];
+	const fallbackOutput = buildDeterministicOutput(agent);
+	let output = fallbackOutput;
+	let executionMode = "deterministic-fallback";
+	let validationNotes = [];
+
+	if (hasLlmConfig()) {
+		try {
+			output = await callLlmAgent(agentId, agent, fallbackOutput);
+			executionMode = "llm-provider";
+			state.providerSettings.lastStatus = `LLM agent completed via ${state.providerSettings.llm.providerName}.`;
+		} catch (error) {
+			validationNotes = [
+				`LLM provider failed; deterministic fallback used. ${error.message}`,
+			];
+			state.providerSettings.lastStatus = validationNotes[0];
+		}
+	}
+
 	state.outputs[agentId] = {
-		memo: contextualizeMemo(agent),
-		headers: [...agent.headers],
-		rows: agent.rows.map((row) => [...row]),
-		alternatives: [],
-		critique: "",
+		...output,
+		alternatives: output.alternatives || [],
+		critique: output.critique || "",
 		revisedAt: "",
 		versions: [],
 	};
@@ -1238,15 +1352,24 @@ function runAgent(agentId) {
 		state.references.map((reference) => reference.title),
 		{
 			fullOutput: state.outputs[agentId],
-			agentPrompt: agent.requirements.join("; "),
+			agentPrompt: buildAgentPrompt(agentId, agent, fallbackOutput),
+			model:
+				executionMode === "llm-provider"
+					? state.providerSettings.llm.model
+					: "deterministic-full-static-agent-v2",
+			configuration: {
+				execution: executionMode,
+				provider: redactedProviderSettings(),
+			},
+			validationNotes,
 		},
 	);
 	save();
 	show(phaseForAgent(agentId).id);
 }
 
-function requestAlternative(agentId) {
-	if (!state.outputs[agentId]) runAgent(agentId);
+async function requestAlternative(agentId) {
+	if (!state.outputs[agentId]) await runAgent(agentId);
 	const agent = agentCatalog[agentId];
 	const alternative = `Alternative framing: treat ${agent.outputTitle.toLowerCase()} as a comparison set rather than a final recommendation; require human adjudication before downstream reuse.`;
 	state.outputs[agentId].alternatives.unshift(alternative);
@@ -1257,6 +1380,7 @@ function requestAlternative(agentId) {
 		"Request alternative output",
 		alternative,
 		"alternative requested",
+		"",
 		[],
 		{
 			fullOutput: state.outputs[agentId],
@@ -1296,13 +1420,13 @@ function phaseCheckpoint(phaseId, status) {
 	show(phaseId);
 }
 
-function critiquePhase(phaseId) {
+async function critiquePhase(phaseId) {
 	const phase = phaseDefinitions.find((item) => item.id === phaseId);
-	phase.agents.forEach((agentId) => {
-		if (!state.outputs[agentId]) runAgent(agentId);
+	for (const agentId of phase.agents) {
+		if (!state.outputs[agentId]) await runAgent(agentId);
 		state.outputs[agentId].critique =
 			`Critique: verify source grounding, inspect construct drift, and require human approval before using ${agentCatalog[agentId].outputTitle.toLowerCase()} in later phases.`;
-	});
+	}
 	record(
 		phaseId,
 		"Workflow Orchestrator",
@@ -1322,6 +1446,130 @@ function contextualizeMemo(agent) {
 		? ` Relevant theories: ${state.project.knownTheories}.`
 		: "";
 	return `${agent.memo}${context}${theories}`;
+}
+
+function buildDeterministicOutput(agent) {
+	return {
+		memo: contextualizeMemo(agent),
+		headers: [...agent.headers],
+		rows: agent.rows.map((row) => [...row]),
+		alternatives: [],
+		critique: "",
+	};
+}
+
+function hasLlmConfig() {
+	const { endpoint, apiKey, model } = state.providerSettings.llm;
+	return Boolean(endpoint && apiKey && model);
+}
+
+function hasElsevierConfig() {
+	const { endpoint, apiKey } = state.providerSettings.elsevier;
+	return Boolean(endpoint && apiKey);
+}
+
+function redactedProviderSettings() {
+	return {
+		llm: {
+			providerName: state.providerSettings.llm.providerName,
+			endpoint: state.providerSettings.llm.endpoint,
+			model: state.providerSettings.llm.model,
+			apiKey: state.providerSettings.llm.apiKey ? "[configured]" : "",
+		},
+		elsevier: {
+			endpoint: state.providerSettings.elsevier.endpoint,
+			query: state.providerSettings.elsevier.query,
+			apiKey: state.providerSettings.elsevier.apiKey ? "[configured]" : "",
+			instToken: state.providerSettings.elsevier.instToken
+				? "[configured]"
+				: "",
+		},
+	};
+}
+
+function buildAgentPrompt(agentId, agent, fallbackOutput) {
+	const phase = phaseForAgent(agentId);
+	const documents = state.documents
+		.map((doc) => `- ${doc.title} (${doc.type}): ${doc.text.slice(0, 1200)}`)
+		.join("\n");
+	const references = state.references
+		.map(
+			(reference) =>
+				`- ${reference.title} [${reference.status}] ${reference.source}: ${reference.excerpt}`,
+		)
+		.join("\n");
+	return `You are ${agent.name} in AgenticTheoryLab.\n\nPhase: ${phase.title}\nRole: ${agent.role}\nFunctional requirements:\n- ${agent.requirements.join("\n- ")}\n\nProject:\n${JSON.stringify(state.project, null, 2)}\n\nAvailable documents:\n${documents || "None"}\n\nReferences:\n${references || "None"}\n\nExpected output headers: ${fallbackOutput.headers.join(" | ")}\n\nReturn ONLY valid JSON matching this schema: {"memo":"string","headers":["string"],"rows":[["string"]],"critique":"string","alternatives":["string"]}. Keep rows scholarly, source-aware, and aligned with Information Systems theory construction. Do not fabricate citations; if evidence is weak, state that in critique.`;
+}
+
+async function callLlmAgent(agentId, agent, fallbackOutput) {
+	const { endpoint, apiKey, model } = state.providerSettings.llm;
+	const response = await fetch(endpoint, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${apiKey}`,
+		},
+		body: JSON.stringify({
+			model,
+			temperature: 0.2,
+			messages: [
+				{
+					role: "system",
+					content:
+						"You are a rigorous Information Systems theory-construction research assistant. Return strict JSON only.",
+				},
+				{
+					role: "user",
+					content: buildAgentPrompt(agentId, agent, fallbackOutput),
+				},
+			],
+		}),
+	});
+	if (!response.ok) {
+		throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+	}
+	const data = await response.json();
+	const content = data.choices?.[0]?.message?.content || data.output_text || "";
+	return parseLlmOutput(content, fallbackOutput);
+}
+
+function parseLlmOutput(content, fallbackOutput) {
+	try {
+		const parsed = JSON.parse(stripJsonFence(content));
+		return {
+			memo: String(parsed.memo || fallbackOutput.memo),
+			headers: Array.isArray(parsed.headers)
+				? parsed.headers
+				: fallbackOutput.headers,
+			rows: normalizeRows(parsed.rows, fallbackOutput.rows),
+			critique: String(parsed.critique || ""),
+			alternatives: Array.isArray(parsed.alternatives)
+				? parsed.alternatives
+				: [],
+		};
+	} catch {
+		return {
+			...fallbackOutput,
+			memo: content || fallbackOutput.memo,
+			critique:
+				"Provider returned non-JSON content; memo was preserved and table fallback retained.",
+		};
+	}
+}
+
+function stripJsonFence(content) {
+	return String(content || "")
+		.trim()
+		.replace(/^```(?:json)?\s*/i, "")
+		.replace(/```$/i, "")
+		.trim();
+}
+
+function normalizeRows(rows, fallbackRows) {
+	if (!Array.isArray(rows)) return fallbackRows;
+	return rows
+		.filter((row) => Array.isArray(row))
+		.map((row) => row.map((cell) => String(cell ?? "")));
 }
 
 function renderOutput(agentId, output) {
@@ -1412,12 +1660,124 @@ function renderReview() {
 }
 
 function renderSources() {
-	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Source verifier</p><h2>Citation and grounding checks</h2><p>Track sources, retrieved passages, verification notes, and weak-evidence warnings. This prevents hallucinated citations by requiring human verification.</p><table><thead><tr><th>Source</th><th>Passage</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.references.map((reference, index) => `<tr><td>${escapeHtml(reference.title)}<br><small>${escapeHtml(reference.source)}</small></td><td>${escapeHtml(reference.excerpt)}</td><td><span class="pill">${escapeHtml(reference.status)}</span></td><td><button type="button" class="secondary" data-verify="${index}">Mark verified</button></td></tr>`).join("") || `<tr><td colspan="4">No references registered.</td></tr>`}</tbody></table></section>`;
+	const defaultQuery =
+		state.providerSettings.elsevier.query ||
+		state.project.description ||
+		"agentic AI governance information systems";
+	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Source verifier</p><h2>Citation and grounding checks</h2><p>Track sources, retrieved passages, verification notes, and weak-evidence warnings. This prevents hallucinated citations by requiring human verification.</p><div class="form-grid"><label class="wide">Elsevier discovery query<input id="elsevierQuery" value="${escapeAttr(defaultQuery)}"></label></div><div class="button-row"><button type="button" id="discoverElsevier">Discover from Elsevier</button><button type="button" class="secondary" data-target="settings" id="openProviderSettings">Provider settings</button></div><p class="warning">Elsevier discovery requires your own API key. Retrieved records are added as unverified references until a human marks them verified.</p><table><thead><tr><th>Source</th><th>Passage</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.references.map((reference, index) => `<tr><td>${escapeHtml(reference.title)}<br><small>${escapeHtml(reference.source)}</small></td><td>${escapeHtml(reference.excerpt)}</td><td><span class="pill">${escapeHtml(reference.status)}</span></td><td><button type="button" class="secondary" data-verify="${index}">Mark verified</button></td></tr>`).join("") || `<tr><td colspan="4">No references registered.</td></tr>`}</tbody></table></section>`;
+	document
+		.getElementById("discoverElsevier")
+		.addEventListener("click", discoverElsevierSources);
+	document
+		.getElementById("openProviderSettings")
+		.addEventListener("click", () => show("settings"));
 	document.querySelectorAll("[data-verify]").forEach((button) => {
 		button.addEventListener("click", () =>
 			verifyReference(Number(button.dataset.verify)),
 		);
 	});
+}
+
+async function discoverElsevierSources() {
+	if (!hasElsevierConfig()) {
+		state.providerSettings.lastStatus =
+			"Elsevier API key missing. Add credentials in Provider APIs before discovery.";
+		record(
+			"retrieval",
+			"Elsevier Discovery",
+			"Discover sources",
+			state.providerSettings.lastStatus,
+			"blocked",
+			"",
+			[],
+			{ configuration: redactedProviderSettings() },
+		);
+		save();
+		renderSources();
+		return;
+	}
+	const query =
+		inputValue("elsevierQuery") || state.providerSettings.elsevier.query;
+	state.providerSettings.elsevier.query = query;
+	try {
+		const references = await callElsevierSearch(query);
+		state.references.unshift(...references);
+		state.providerSettings.lastStatus = `Elsevier discovery added ${references.length} reference${references.length === 1 ? "" : "s"}.`;
+		record(
+			"retrieval",
+			"Elsevier Discovery",
+			query,
+			state.providerSettings.lastStatus,
+			"retrieved",
+			"",
+			references.map((reference) => reference.title),
+			{
+				configuration: redactedProviderSettings(),
+				fullOutput: references,
+				model: "elsevier-scopus-search-api",
+			},
+		);
+	} catch (error) {
+		state.providerSettings.lastStatus = `Elsevier discovery failed: ${error.message}`;
+		record(
+			"retrieval",
+			"Elsevier Discovery",
+			query,
+			state.providerSettings.lastStatus,
+			"failed",
+			"",
+			[],
+			{
+				configuration: redactedProviderSettings(),
+				validationNotes: [state.providerSettings.lastStatus],
+				model: "elsevier-scopus-search-api",
+			},
+		);
+	}
+	save();
+	renderSources();
+}
+
+async function callElsevierSearch(query) {
+	const { endpoint, apiKey, instToken } = state.providerSettings.elsevier;
+	const url = new URL(endpoint);
+	url.searchParams.set("query", query);
+	url.searchParams.set("count", "5");
+	const headers = {
+		Accept: "application/json",
+		"X-ELS-APIKey": apiKey,
+	};
+	if (instToken) headers["X-ELS-Insttoken"] = instToken;
+	const response = await fetch(url.toString(), { headers });
+	if (!response.ok) {
+		throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+	}
+	const data = await response.json();
+	const entries = data["search-results"]?.entry || data.entries || [];
+	return entries.slice(0, 5).map((entry) => ({
+		title: String(
+			entry["dc:title"] || entry.title || "Untitled Elsevier record",
+		),
+		source: formatElsevierSource(entry),
+		excerpt: String(
+			entry["prism:publicationName"] ||
+				entry.description ||
+				entry["dc:description"] ||
+				"Elsevier search result; inspect source before citation use.",
+		),
+		status: "needs verification",
+		provider: "Elsevier Scopus Search API",
+		retrievedAt: new Date().toISOString(),
+	}));
+}
+
+function formatElsevierSource(entry) {
+	const doi = entry["prism:doi"] || entry.doi;
+	const url = entry["prism:url"] || entry.link?.[0]?.["@href"] || entry.url;
+	const coverDate = entry["prism:coverDate"] || entry.coverDate || "n.d.";
+	if (doi) return `DOI: ${doi} (${coverDate})`;
+	if (url) return `${url} (${coverDate})`;
+	return `Elsevier Scopus record (${coverDate})`;
 }
 
 function verifyReference(index) {
@@ -1578,7 +1938,10 @@ function sectionMarkdown(agentIds) {
 }
 
 function buildAppendix() {
-	return `## GenAI-use appendix\n\nAgenticTheoryLab used deterministic, source-bounded agent modules to generate candidate theory-construction outputs. The system recorded project inputs, agent outputs, model identifiers, sources used, retrieved passages, human approvals, revisions, rejected alternatives, citation-verification requests, expert-review escalations, and export history. Human researchers retain final scholarly judgement and publication accountability.\n\nExports generated: ${state.exportHistory.map((item) => item.name).join(", ") || "none yet"}.`;
+	const providerMode = hasLlmConfig()
+		? `${state.providerSettings.llm.providerName} / ${state.providerSettings.llm.model}`
+		: "deterministic local fallback";
+	return `## GenAI-use appendix\n\nAgenticTheoryLab used ${providerMode} to generate candidate theory-construction outputs. The system recorded project inputs, agent outputs, model identifiers, sources used, retrieved passages, human approvals, revisions, rejected alternatives, citation-verification requests, expert-review escalations, provider configuration with redacted keys, and export history. Human researchers retain final scholarly judgement and publication accountability.\n\nExports generated: ${state.exportHistory.map((item) => item.name).join(", ") || "none yet"}.`;
 }
 
 function buildDecisionTrail() {
