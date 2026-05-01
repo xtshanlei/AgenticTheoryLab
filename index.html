@@ -35,7 +35,7 @@
           <p class="eyebrow">Human-in-the-loop multi-agent laboratory</p>
           <h1>AgenticTheoryLab</h1>
         </div>
-        <button class="secondary" id="seedExample">Load example project</button>
+        <button type="button" class="secondary" id="seedExample">Load example project</button>
       </header>
 
       <section class="hero card ribbon">
@@ -43,7 +43,7 @@
           <p class="eyebrow">Project workspace</p>
           <h2 id="projectTitle">Untitled theory-construction project</h2>
           <p id="projectDescription">
-            Define a project, run one bounded agent per phase, review every output, and export an auditable research package.
+            Define a project, run the full sixteen-agent workflow, review every output, and export an auditable research package.
           </p>
         </div>
         <div class="stats">
@@ -62,11 +62,14 @@
             <h3>Decision controls</h3>
             <textarea id="reviewComment" placeholder="Add scholarly judgement, revisions, uncertainty notes, or citation-verification requests."></textarea>
             <div class="button-row">
-              <button id="approveBtn">Approve</button>
-              <button class="secondary" id="reviseBtn">Revise</button>
-              <button class="critical" id="rejectBtn">Reject</button>
+              <button type="button" id="approveBtn">Approve</button>
+              <button type="button" class="secondary" id="reviseBtn">Revise</button>
+              <button type="button" class="critical" id="rejectBtn">Reject</button>
             </div>
-            <button class="secondary full" id="uncertainBtn">Mark as uncertain</button>
+            <button type="button" class="secondary full" id="uncertainBtn">Mark as uncertain</button>
+            <button type="button" class="secondary full" id="alternativesBtn">Request alternatives</button>
+            <button type="button" class="secondary full" id="citationBtn">Request citation verification</button>
+            <button type="button" class="secondary full" id="expertBtn">Escalate for expert review</button>
           </section>
 
           <section class="card agent-zone">
