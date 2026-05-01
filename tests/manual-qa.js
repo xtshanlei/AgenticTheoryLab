@@ -1,9 +1,10 @@
 const { chromium } = require("playwright");
 
 async function main() {
+  const baseUrl = process.env.ATL_BASE_URL || "http://localhost:4173/";
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  await page.goto("http://localhost:4173/");
+  await page.goto(baseUrl);
   await page.click("#seedExample");
 
   for (const phase of ["conceptualisation", "measurement", "design", "refinement"]) {
