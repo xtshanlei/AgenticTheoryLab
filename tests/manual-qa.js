@@ -5,6 +5,7 @@ async function main() {
 	const origin = new URL(baseUrl).origin;
 	const browser = await chromium.launch();
 	const page = await browser.newPage();
+	page.on("dialog", (dialog) => dialog.accept());
 	await page.route("**/mock-llm", async (route) => {
 		await route.fulfill({
 			contentType: "application/json",
@@ -32,7 +33,35 @@ async function main() {
 			}),
 		});
 	});
-	await page.route("**/mock-elsevier**", async (route) => {
+	await page.route("**/mock-llm-error", async (route) => {
+		await route.fulfill({
+			contentType: "application/json",
+			status: 500,
+			body: JSON.stringify({ error: "do-not-persist-sensitive-provider-body" }),
+		});
+	});
+	await page.route("**/mock-llm-text", async (route) => {
+		await route.fulfill({
+			contentType: "application/json",
+			body: JSON.stringify({
+				choices: [
+					{
+						message: {
+							content: "Plain text provider output for fallback parser.",
+						},
+					},
+				],
+			}),
+		});
+	});
+	await page.route("**/mock-elsevier-error**", async (route) => {
+		await route.fulfill({
+			contentType: "application/json",
+			status: 503,
+			body: JSON.stringify({ error: "do-not-persist-elsevier-body" }),
+		});
+	});
+	await page.route(/\/mock-elsevier(?:\?|$)/, async (route) => {
 		await route.fulfill({
 			contentType: "application/json",
 			body: JSON.stringify({
@@ -63,6 +92,21 @@ async function main() {
 	await page.fill("#elsevierQuerySetting", "agentic AI governance");
 	await page.click("#saveProviders");
 	await page.click('[data-target="sources"]');
+	await page.fill("#elsevierQuery", "agentic AI governance failure");
+	await page.click('[data-target="settings"]');
+	await page.fill("#elsevierEndpoint", `${origin}/mock-elsevier-error`);
+	await page.click("#saveProviders");
+	await page.click('[data-target="sources"]');
+	await page.click("#discoverElsevier");
+	await page.waitForFunction(() =>
+		JSON.parse(
+			localStorage.getItem("atl-state"),
+		).providerSettings.lastStatus.includes("HTTP 503"),
+	);
+	await page.click('[data-target="settings"]');
+	await page.fill("#elsevierEndpoint", `${origin}/mock-elsevier`);
+	await page.click("#saveProviders");
+	await page.click('[data-target="sources"]');
 	await page.click("#discoverElsevier");
 	await page.waitForFunction(() =>
 		JSON.parse(localStorage.getItem("atl-state")).references.some((reference) =>
@@ -72,6 +116,34 @@ async function main() {
 	await page.click('[data-target="documents"]');
 	await page.setInputFiles("#docFile", "requirements.md");
 	await page.click("#addDocument");
+	await page.click('[data-phase="conceptualisation"]');
+	await page.click('[data-run="phenomenon_definition"]');
+	await page.waitForFunction(() =>
+		JSON.parse(localStorage.getItem("atl-state")).provenance.some(
+			(entry) => entry.model === "mock-theory-model",
+		),
+	);
+	await page.click('[data-target="settings"]');
+	await page.fill("#llmEndpoint", `${origin}/mock-llm-error`);
+	await page.click("#saveProviders");
+	await page.click('[data-phase="conceptualisation"]');
+	await page.click('[data-run="reference_mapping"]');
+	await page.waitForFunction(() => {
+		const state = JSON.parse(localStorage.getItem("atl-state"));
+		return state.providerSettings.lastStatus.includes("HTTP 500");
+	});
+	await page.click('[data-target="settings"]');
+	await page.fill("#llmEndpoint", `${origin}/mock-llm-text`);
+	await page.click("#saveProviders");
+	await page.click('[data-phase="conceptualisation"]');
+	await page.click('[data-run="construct_decomposition"]');
+	await page.waitForFunction(() => {
+		const state = JSON.parse(localStorage.getItem("atl-state"));
+		return state.outputs.construct_decomposition?.critique.includes("non-JSON");
+	});
+	await page.click('[data-target="settings"]');
+	await page.fill("#llmEndpoint", `${origin}/mock-llm`);
+	await page.click("#saveProviders");
 
 	for (const phase of [
 		"conceptualisation",
@@ -199,6 +271,23 @@ async function main() {
 				(reference) => reference.source.includes("10.0000/mock-agentic-theory"),
 			),
 		),
+		genericProviderErrors: await page.evaluate(() => {
+			const stateText = localStorage.getItem("atl-state");
+			return (
+				stateText.includes("HTTP 500") &&
+				stateText.includes("HTTP 503") &&
+				!stateText.includes("do-not-persist-sensitive-provider-body") &&
+				!stateText.includes("do-not-persist-elsevier-body")
+			);
+		}),
+		nonJsonFallback: await page.evaluate(() =>
+			JSON.parse(localStorage.getItem("atl-state")).provenance.some((entry) =>
+				entry.full_output?.critique?.includes("non-JSON"),
+			),
+		),
+		disclosureCopy: (await page.textContent("body")).includes(
+			"Exported files may contain sensitive project materials",
+		),
 	};
 	console.log(JSON.stringify(result, null, 2));
 
@@ -221,6 +310,14 @@ async function main() {
 		throw new Error("Provider keys were not redacted in provenance.");
 	if (!result.elsevierReference)
 		throw new Error("Mock Elsevier discovery did not add a source reference.");
+	if (!result.genericProviderErrors)
+		throw new Error(
+			"Provider error bodies were persisted or generic errors missing.",
+		);
+	if (!result.nonJsonFallback)
+		throw new Error("Non-JSON LLM fallback was not recorded.");
+	if (!result.disclosureCopy)
+		throw new Error("Export disclosure copy is missing.");
 
 	await browser.close();
 }

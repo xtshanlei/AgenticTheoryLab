@@ -859,6 +859,8 @@ const defaultState = {
 	scores: {},
 };
 
+const providerRequestTimeoutMs = 20_000;
+
 let state = migrateState(
 	JSON.parse(localStorage.getItem("atl-state") || "null"),
 );
@@ -1156,7 +1158,7 @@ function renderDashboard() {
 
 function renderSettings() {
 	const { llm, elsevier } = state.providerSettings;
-	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Provider APIs</p><h2>Connect real agent providers</h2><p>Enter your own LLM provider and Elsevier developer credentials. Keys are stored only in this browser's local storage for this static GitHub Pages app; use a backend or proxy if your institution requires protected secret storage or if a provider blocks browser CORS.</p><div class="form-grid"><label>LLM provider name<input id="llmProviderName" value="${escapeAttr(llm.providerName)}"></label><label>Model<input id="llmModel" value="${escapeAttr(llm.model)}"></label><label class="wide">OpenAI-compatible chat completions endpoint<input id="llmEndpoint" placeholder="https://api.openai.com/v1/chat/completions" value="${escapeAttr(llm.endpoint)}"></label><label class="wide">LLM API key<input id="llmApiKey" type="password" autocomplete="off" value="${escapeAttr(llm.apiKey)}"></label><label class="wide">Elsevier Scopus Search endpoint<input id="elsevierEndpoint" value="${escapeAttr(elsevier.endpoint)}"></label><label>Elsevier API key<input id="elsevierApiKey" type="password" autocomplete="off" value="${escapeAttr(elsevier.apiKey)}"></label><label>Elsevier institution token (optional)<input id="elsevierInstToken" type="password" autocomplete="off" value="${escapeAttr(elsevier.instToken)}"></label><label class="wide">Default Elsevier query<input id="elsevierQuerySetting" value="${escapeAttr(elsevier.query || state.project.description)}"></label></div><div class="button-row"><button type="button" id="saveProviders">Save providers locally</button><button type="button" class="secondary" id="clearProviders">Clear provider keys</button></div><p class="warning">Static-site limitation: API keys entered here are available to your browser session. For shared deployments, use short-lived keys, an institution-approved API gateway, or a private backend.</p></section>`;
+	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Provider APIs</p><h2>Connect real agent providers</h2><p>Enter your own LLM provider and Elsevier developer credentials. Keys are stored only in this browser's local storage for this static GitHub Pages app; use a backend or proxy if your institution requires protected secret storage or if a provider blocks browser CORS.</p><div class="form-grid"><label>LLM provider name<input id="llmProviderName" value="${escapeAttr(llm.providerName)}"></label><label>Model<input id="llmModel" value="${escapeAttr(llm.model)}"></label><label class="wide">OpenAI-compatible chat completions endpoint<input id="llmEndpoint" placeholder="https://api.openai.com/v1/chat/completions" value="${escapeAttr(llm.endpoint)}"></label><label class="wide">LLM API key<input id="llmApiKey" type="password" autocomplete="off" value="${escapeAttr(llm.apiKey)}"></label><label class="wide">Elsevier Scopus Search endpoint<input id="elsevierEndpoint" value="${escapeAttr(elsevier.endpoint)}"></label><label>Elsevier API key<input id="elsevierApiKey" type="password" autocomplete="off" value="${escapeAttr(elsevier.apiKey)}"></label><label>Elsevier institution token (optional)<input id="elsevierInstToken" type="password" autocomplete="off" value="${escapeAttr(elsevier.instToken)}"></label><label class="wide">Default Elsevier query<input id="elsevierQuerySetting" value="${escapeAttr(elsevier.query || state.project.description)}"></label></div><div class="button-row"><button type="button" id="saveProviders">Save providers locally</button><button type="button" class="secondary" id="clearProviders">Clear provider keys</button></div><p class="warning">Static-site limitation: API keys entered here are available to your browser session. LLM agent runs send project fields, reference text, and document snippets to the configured LLM endpoint; Elsevier discovery sends the search query to Elsevier. Use only trusted HTTPS endpoints and non-sensitive or institution-approved materials.</p></section>`;
 	document
 		.getElementById("saveProviders")
 		.addEventListener("click", saveProviderSettings);
@@ -1180,9 +1182,7 @@ function saveProviderSettings() {
 		instToken: inputValue("elsevierInstToken"),
 		query: inputValue("elsevierQuerySetting"),
 	};
-	state.providerSettings.lastStatus = hasLlmConfig()
-		? `LLM provider configured: ${state.providerSettings.llm.providerName} / ${state.providerSettings.llm.model}`
-		: "No LLM provider configured. Agents use deterministic local fallback.";
+	state.providerSettings.lastStatus = providerStatusMessage();
 	record(
 		"settings",
 		"Provider Settings",
@@ -1211,7 +1211,7 @@ function clearProviderSettings() {
 }
 
 function renderDocuments() {
-	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Document input</p><h2>Project documents and references</h2><p>Capture pasted text, upload local text/CSV/Markdown notes, summaries, tables, empirical design notes, statistical results, and manually entered references. Files remain local to the browser; this static build does not upload research materials.</p><div class="form-grid"><label>Document title<input id="docTitle"></label><label>Document type<select id="docType"><option>literature summary</option><option>conceptual note</option><option>table</option><option>empirical design note</option><option>statistical result</option><option>reviewer comment</option><option>uploaded file</option></select></label><label class="wide">Upload local document<input id="docFile" type="file" accept=".txt,.md,.csv,.json,text/*"></label><label class="wide">Document text<textarea id="docText"></textarea></label><label>Reference title<input id="refTitle"></label><label>Source / citation<input id="refSource"></label><label class="wide">Retrieved passage or evidence note<textarea id="refExcerpt"></textarea></label></div><div class="button-row"><button type="button" id="addDocument">Add document</button><button type="button" class="secondary" id="addReference">Add reference</button></div></section><section class="card"><p class="eyebrow">Document store</p>${renderList(state.documents, (doc) => `<strong>${escapeHtml(doc.title)}</strong><br><span class="pill">${escapeHtml(doc.type)}</span> ${doc.fileName ? `<span class="pill">${escapeHtml(doc.fileName)}</span>` : ""}<p>${escapeHtml(doc.text)}</p>`)}</section><section class="card"><p class="eyebrow">Reference registry</p>${renderList(state.references, (reference) => `<strong>${escapeHtml(reference.title)}</strong><br><span class="pill">${escapeHtml(reference.status)}</span> ${escapeHtml(reference.source)}<p>${escapeHtml(reference.excerpt)}</p>`)}</section>`;
+	view.innerHTML = `<section class="card ribbon"><p class="eyebrow">Document input</p><h2>Project documents and references</h2><p>Capture pasted text, upload local text/CSV/Markdown notes, summaries, tables, empirical design notes, statistical results, and manually entered references. Files are stored in this browser. If you configure an LLM provider and run agents, project fields, references, and up to the first 1200 characters of each document are sent to that provider endpoint.</p><div class="form-grid"><label>Document title<input id="docTitle"></label><label>Document type<select id="docType"><option>literature summary</option><option>conceptual note</option><option>table</option><option>empirical design note</option><option>statistical result</option><option>reviewer comment</option><option>uploaded file</option></select></label><label class="wide">Upload local document<input id="docFile" type="file" accept=".txt,.md,.csv,.json,text/*"></label><label class="wide">Document text<textarea id="docText"></textarea></label><label>Reference title<input id="refTitle"></label><label>Source / citation<input id="refSource"></label><label class="wide">Retrieved passage or evidence note<textarea id="refExcerpt"></textarea></label></div><div class="button-row"><button type="button" id="addDocument">Add document</button><button type="button" class="secondary" id="addReference">Add reference</button></div></section><section class="card"><p class="eyebrow">Document store</p>${renderList(state.documents, (doc) => `<strong>${escapeHtml(doc.title)}</strong><br><span class="pill">${escapeHtml(doc.type)}</span> ${doc.fileName ? `<span class="pill">${escapeHtml(doc.fileName)}</span>` : ""}<p>${escapeHtml(doc.text)}</p>`)}</section><section class="card"><p class="eyebrow">Reference registry</p>${renderList(state.references, (reference) => `<strong>${escapeHtml(reference.title)}</strong><br><span class="pill">${escapeHtml(reference.status)}</span> ${escapeHtml(reference.source)}<p>${escapeHtml(reference.excerpt)}</p>`)}</section>`;
 	document.getElementById("addDocument").addEventListener("click", addDocument);
 	document
 		.getElementById("addReference")
@@ -1321,12 +1321,19 @@ async function runAgent(agentId) {
 
 	if (hasLlmConfig()) {
 		try {
-			output = await callLlmAgent(agentId, agent, fallbackOutput);
-			executionMode = "llm-provider";
-			state.providerSettings.lastStatus = `LLM agent completed via ${state.providerSettings.llm.providerName}.`;
+			if (shouldConfirmExternalLlmSend() && !confirmExternalLlmSend()) {
+				validationNotes = [
+					"External LLM send was cancelled by the researcher; deterministic fallback used.",
+				];
+				state.providerSettings.lastStatus = validationNotes[0];
+			} else {
+				output = await callLlmAgent(agentId, agent, fallbackOutput);
+				executionMode = "llm-provider";
+				state.providerSettings.lastStatus = `LLM agent completed via ${state.providerSettings.llm.providerName}.`;
+			}
 		} catch (error) {
 			validationNotes = [
-				`LLM provider failed; deterministic fallback used. ${error.message}`,
+				`LLM provider failed; deterministic fallback used. ${safeErrorMessage(error)}`,
 			];
 			state.providerSettings.lastStatus = validationNotes[0];
 		}
@@ -1503,34 +1510,80 @@ function buildAgentPrompt(agentId, agent, fallbackOutput) {
 
 async function callLlmAgent(agentId, agent, fallbackOutput) {
 	const { endpoint, apiKey, model } = state.providerSettings.llm;
-	const response = await fetch(endpoint, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${apiKey}`,
+	const response = await fetchWithTimeout(
+		endpoint,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${apiKey}`,
+			},
+			body: JSON.stringify({
+				model,
+				temperature: 0.2,
+				messages: [
+					{
+						role: "system",
+						content:
+							"You are a rigorous Information Systems theory-construction research assistant. Return strict JSON only.",
+					},
+					{
+						role: "user",
+						content: buildAgentPrompt(agentId, agent, fallbackOutput),
+					},
+				],
+			}),
 		},
-		body: JSON.stringify({
-			model,
-			temperature: 0.2,
-			messages: [
-				{
-					role: "system",
-					content:
-						"You are a rigorous Information Systems theory-construction research assistant. Return strict JSON only.",
-				},
-				{
-					role: "user",
-					content: buildAgentPrompt(agentId, agent, fallbackOutput),
-				},
-			],
-		}),
-	});
+		providerRequestTimeoutMs,
+	);
 	if (!response.ok) {
-		throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+		throw new Error(`HTTP ${response.status}`);
 	}
 	const data = await response.json();
 	const content = data.choices?.[0]?.message?.content || data.output_text || "";
 	return parseLlmOutput(content, fallbackOutput);
+}
+
+function providerStatusMessage() {
+	if (hasLlmConfig() && hasElsevierConfig()) {
+		return `LLM and Elsevier providers configured: ${state.providerSettings.llm.providerName} / ${state.providerSettings.llm.model}`;
+	}
+	if (hasLlmConfig()) {
+		return `LLM provider configured: ${state.providerSettings.llm.providerName} / ${state.providerSettings.llm.model}`;
+	}
+	if (hasElsevierConfig()) return "Elsevier discovery provider configured.";
+	return "No provider configured. Agents use deterministic local fallback.";
+}
+
+function shouldConfirmExternalLlmSend() {
+	return Boolean(state.documents.length || state.references.length);
+}
+
+function confirmExternalLlmSend() {
+	return window.confirm(
+		"This LLM agent run will send project fields, reference text, and document snippets to your configured LLM endpoint. Continue only if those materials are approved for that provider.",
+	);
+}
+
+async function fetchWithTimeout(url, options, timeoutMs) {
+	const controller = new AbortController();
+	const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+	try {
+		return await fetch(url, { ...options, signal: controller.signal });
+	} catch (error) {
+		if (error.name === "AbortError") throw new Error("Request timed out");
+		throw error;
+	} finally {
+		window.clearTimeout(timeoutId);
+	}
+}
+
+function safeErrorMessage(error) {
+	const message = String(error?.message || "Provider request failed");
+	if (message === "Request timed out") return message;
+	const httpMatch = message.match(/^HTTP \d{3}/);
+	if (httpMatch) return httpMatch[0];
+	return "Provider request failed";
 }
 
 function parseLlmOutput(content, fallbackOutput) {
@@ -1748,9 +1801,13 @@ async function callElsevierSearch(query) {
 		"X-ELS-APIKey": apiKey,
 	};
 	if (instToken) headers["X-ELS-Insttoken"] = instToken;
-	const response = await fetch(url.toString(), { headers });
+	const response = await fetchWithTimeout(
+		url.toString(),
+		{ headers },
+		providerRequestTimeoutMs,
+	);
 	if (!response.ok) {
-		throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+		throw new Error(`HTTP ${response.status}`);
 	}
 	const data = await response.json();
 	const entries = data["search-results"]?.entry || data.entries || [];
@@ -1941,7 +1998,7 @@ function buildAppendix() {
 	const providerMode = hasLlmConfig()
 		? `${state.providerSettings.llm.providerName} / ${state.providerSettings.llm.model}`
 		: "deterministic local fallback";
-	return `## GenAI-use appendix\n\nAgenticTheoryLab used ${providerMode} to generate candidate theory-construction outputs. The system recorded project inputs, agent outputs, model identifiers, sources used, retrieved passages, human approvals, revisions, rejected alternatives, citation-verification requests, expert-review escalations, provider configuration with redacted keys, and export history. Human researchers retain final scholarly judgement and publication accountability.\n\nExports generated: ${state.exportHistory.map((item) => item.name).join(", ") || "none yet"}.`;
+	return `## GenAI-use appendix\n\nAgenticTheoryLab used ${providerMode} to generate candidate theory-construction outputs. When an LLM provider is configured, agent prompts transmit project fields, reference text, and document snippets to the configured endpoint. The system recorded project inputs, agent outputs, model identifiers, sources used, retrieved passages, human approvals, revisions, rejected alternatives, citation-verification requests, expert-review escalations, provider configuration with redacted keys, and export history. Exported files may contain sensitive project materials and should be shared only through approved research channels. Human researchers retain final scholarly judgement and publication accountability.\n\nExports generated: ${state.exportHistory.map((item) => item.name).join(", ") || "none yet"}.`;
 }
 
 function buildDecisionTrail() {
