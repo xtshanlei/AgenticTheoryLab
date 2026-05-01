@@ -1,3 +1,3 @@
 # Theory Construction Workflow
 
-The MVP follows four phases: conceptualisation, measurement, research design, and refinement. Each phase has one bounded agent and one mandatory human review checkpoint.
+The implementation follows four phases: conceptualisation, measurement, research design, and refinement. Each phase contains four bounded agents, editable outputs, version comparison, agent-level decisions, and an end-of-phase human approval checkpoint.
