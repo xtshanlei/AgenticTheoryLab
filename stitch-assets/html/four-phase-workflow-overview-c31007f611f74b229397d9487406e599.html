@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgenticTheoryLab - Four-Phase Workflow Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Public+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c6c6cd",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-primary-container": "#7c839b",
+                        "surface-container-high": "#eae7e9",
+                        "background": "#fcf8fa",
+                        "on-background": "#1b1b1d",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#fcf8fa",
+                        "secondary": "#515f74",
+                        "primary": "#000000",
+                        "on-surface-variant": "#45464d",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "on-surface": "#1b1b1d",
+                        "on-primary-fixed": "#131b2e",
+                        "inverse-surface": "#303032",
+                        "secondary-container": "#d5e3fc",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f6f3f5",
+                        "surface-container": "#f0edef",
+                        "surface-dim": "#dcd9db",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary-container": "#98805d",
+                        "inverse-primary": "#bec6e0",
+                        "surface-container-highest": "#e4e2e4",
+                        "primary-fixed-dim": "#bec6e0",
+                        "secondary-fixed": "#d5e3fc",
+                        "primary-fixed": "#dae2fd",
+                        "surface-tint": "#565e74",
+                        "outline": "#76777d",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "primary-container": "#131b2e",
+                        "on-secondary-container": "#57657a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e4e2e4",
+                        "surface": "#fcf8fa",
+                        "tertiary-container": "#271901",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "on-tertiary-fixed": "#271901",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#fcdeb5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin": "32px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Newsreader"],
+                        "headline-md": ["Newsreader"],
+                        "body-md": ["Public Sans"],
+                        "label-caps": ["Public Sans"],
+                        "display-xl": ["Newsreader"],
+                        "body-lg": ["Public Sans"],
+                        "data-table": ["Public Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "data-table": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav aria-label="Main Navigation" class="fixed left-0 top-0 h-full flex flex-col z-40 bg-slate-50 border-r border-slate-200 w-64">
+<div class="p-6 border-b border-slate-200">
+<h1 class="text-lg font-bold text-slate-900 uppercase tracking-widest font-headline-md">AgenticTheoryLab</h1>
+<p class="font-newsreader text-sm tracking-tight text-slate-500 mt-1">IS Theory Construction</p>
+</div>
+<ul class="flex-1 py-4 flex flex-col gap-1">
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-teal-700 font-semibold border-r-2 border-teal-600 bg-teal-50/50" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<span class="font-body-md text-body-md">Conceptualisation</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">straighten</span>
+<span class="font-body-md text-body-md">Measurement</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-body-md text-body-md">Design</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">published_with_changes</span>
+<span class="font-body-md text-body-md">Refinement</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-body-md text-body-md">Provenance</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">file_download</span>
+<span class="font-body-md text-body-md">Export</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-8 z-30 bg-white border-b border-slate-200">
+<div class="flex items-center gap-8">
+<h2 class="text-xl font-bold text-slate-900 font-headline-md">AgenticTheoryLab</h2>
+<nav class="hidden md:flex gap-6">
+<a class="text-teal-700 border-b-2 border-teal-600 pb-4 font-newsreader text-sm font-medium mt-4" href="#">Dashboard</a>
+<a class="text-slate-500 hover:text-teal-600 transition-all font-newsreader text-sm font-medium pb-4 mt-4" href="#">Theory Map</a>
+<a class="text-slate-500 hover:text-teal-600 transition-all font-newsreader text-sm font-medium pb-4 mt-4" href="#">Audit Log</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 hover:text-teal-600 transition-all focus:outline-none focus:ring-0">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-slate-500 hover:text-teal-600 transition-all focus:outline-none focus:ring-0">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-16 p-8 flex-1 overflow-y-auto bg-surface-bright">
+<div class="max-w-container-max mx-auto">
+<header class="mb-margin">
+<h1 class="font-display-xl text-display-xl text-primary mb-2">Theoretical Lifecycle Overview</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">A comprehensive structural roadmap detailing the core phases of IS Theory Construction, highlighting scholarly outputs and collaborative agent involvement.</p>
+</header>
+<!-- 4-Phase Stepper Visual Indicator -->
+<div class="flex items-center justify-between mb-margin">
+<!-- Phase 1 (Active) -->
+<div class="flex-1">
+<div class="h-1 bg-[#0f172a]"></div> <!-- Deep Navy for completed/active base -->
+<div class="pt-unit flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-[#0f172a] uppercase tracking-wider">Phase 1: Conceptualisation</span>
+</div>
+</div>
+<!-- Connector -->
+<div class="w-8 h-[1px] bg-outline-variant mx-2"></div>
+<!-- Phase 2 -->
+<div class="flex-1 opacity-50">
+<div class="h-1 bg-outline-variant"></div>
+<div class="pt-unit">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Phase 2: Measurement</span>
+</div>
+</div>
+<!-- Connector -->
+<div class="w-8 h-[1px] bg-outline-variant mx-2"></div>
+<!-- Phase 3 -->
+<div class="flex-1 opacity-50">
+<div class="h-1 bg-outline-variant"></div>
+<div class="pt-unit">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Phase 3: Design</span>
+</div>
+</div>
+<!-- Connector -->
+<div class="w-8 h-[1px] bg-outline-variant mx-2"></div>
+<!-- Phase 4 -->
+<div class="flex-1 opacity-50">
+<div class="h-1 bg-outline-variant"></div>
+<div class="pt-unit">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Phase 4: Refinement</span>
+</div>
+</div>
+</div>
+<!-- Flowchart Nodes Bento Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter relative">
+<!-- Connecting lines background (desktop only) -->
+<div class="hidden lg:block absolute top-[50%] left-0 w-full h-[1px] bg-outline-variant z-0 -translate-y-1/2"></div>
+<!-- Node 1: Conceptualisation -->
+<div class="bg-surface-container-lowest border border-slate-200 rounded-lg p-6 relative z-10 flex flex-col h-full shadow-sm">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-teal-600 rounded-l-lg"></div> <!-- Active Header Ribbon -->
+<div class="mb-4">
+<div class="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-teal-700">lightbulb</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Conceptualisation</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Defining the boundaries and core constructs of the phenomenon.</p>
+</div>
+<div class="mt-auto space-y-4">
+<div class="bg-[#F0FDFA] p-3 rounded border border-teal-100">
+<span class="font-label-caps text-label-caps text-teal-800 uppercase block mb-1">Agent Focus</span>
+<span class="font-data-table text-data-table font-mono text-teal-900">Ontology Mapping, Literature Synthesis</span>
+</div>
+<div class="border-t border-slate-100 pt-3">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-1">Scholarly Output</span>
+<span class="font-body-md text-body-md font-medium text-primary">Construct Definitions Document</span>
+</div>
+</div>
+</div>
+<!-- Node 2: Measurement -->
+<div class="bg-surface-container-lowest border border-slate-200 rounded-lg p-6 relative z-10 flex flex-col h-full">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-300 rounded-l-lg"></div> <!-- Inactive Ribbon -->
+<div class="mb-4">
+<div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center mb-3 border border-slate-200">
+<span class="material-symbols-outlined text-slate-500">straighten</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Measurement</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Operationalizing constructs into testable variables and metrics.</p>
+</div>
+<div class="mt-auto space-y-4">
+<div class="bg-slate-50 p-3 rounded border border-slate-100">
+<span class="font-label-caps text-label-caps text-slate-600 uppercase block mb-1">Agent Focus</span>
+<span class="font-data-table text-data-table font-mono text-slate-700">Scale Development, Validity Checks</span>
+</div>
+<div class="border-t border-slate-100 pt-3 flex items-center justify-between">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-1">Scholarly Output</span>
+<span class="font-body-md text-body-md font-medium text-primary">Operational Model</span>
+</div>
+<span class="material-symbols-outlined text-[#800020]" title="Human Peer Review Required">verified_user</span> <!-- Burgundy Peer Review Icon -->
+</div>
+</div>
+</div>
+<!-- Node 3: Design -->
+<div class="bg-surface-container-lowest border border-slate-200 rounded-lg p-6 relative z-10 flex flex-col h-full">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-300 rounded-l-lg"></div>
+<div class="mb-4">
+<div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center mb-3 border border-slate-200">
+<span class="material-symbols-outlined text-slate-500">architecture</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Design</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Structuring the theoretical relationships and hypotheses.</p>
+</div>
+<div class="mt-auto space-y-4">
+<div class="bg-slate-50 p-3 rounded border border-slate-100">
+<span class="font-label-caps text-label-caps text-slate-600 uppercase block mb-1">Agent Focus</span>
+<span class="font-data-table text-data-table font-mono text-slate-700">Structural Equation Modeling, Logic Formulation</span>
+</div>
+<div class="border-t border-slate-100 pt-3">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-1">Scholarly Output</span>
+<span class="font-body-md text-body-md font-medium text-primary">Hypothesis Matrix</span>
+</div>
+</div>
+</div>
+<!-- Node 4: Refinement -->
+<div class="bg-surface-container-lowest border border-slate-200 rounded-lg p-6 relative z-10 flex flex-col h-full">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-300 rounded-l-lg"></div>
+<div class="mb-4">
+<div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center mb-3 border border-slate-200">
+<span class="material-symbols-outlined text-slate-500">published_with_changes</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Refinement</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Iterative improvement based on empirical data and peer feedback.</p>
+</div>
+<div class="mt-auto space-y-4">
+<div class="bg-slate-50 p-3 rounded border border-slate-100">
+<span class="font-label-caps text-label-caps text-slate-600 uppercase block mb-1">Agent Focus</span>
+<span class="font-data-table text-data-table font-mono text-slate-700">Anomaly Detection, Sensitivity Analysis</span>
+</div>
+<div class="border-t border-slate-100 pt-3 flex items-center justify-between">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-1">Scholarly Output</span>
+<span class="font-body-md text-body-md font-medium text-primary">Final Theory Artifact</span>
+</div>
+<span class="material-symbols-outlined text-[#800020]" title="Final Human Verification">fact_check</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

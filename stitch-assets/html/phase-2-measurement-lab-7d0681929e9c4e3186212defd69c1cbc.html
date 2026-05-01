@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgenticTheoryLab - Instrument Development Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Public+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c6c6cd",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-primary-container": "#7c839b",
+                        "surface-container-high": "#eae7e9",
+                        "background": "#fcf8fa",
+                        "on-background": "#1b1b1d",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#fcf8fa",
+                        "secondary": "#515f74",
+                        "primary": "#000000",
+                        "on-surface-variant": "#45464d",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "on-surface": "#1b1b1d",
+                        "on-primary-fixed": "#131b2e",
+                        "inverse-surface": "#303032",
+                        "secondary-container": "#d5e3fc",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f6f3f5",
+                        "surface-container": "#f0edef",
+                        "surface-dim": "#dcd9db",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary-container": "#98805d",
+                        "inverse-primary": "#bec6e0",
+                        "surface-container-highest": "#e4e2e4",
+                        "primary-fixed-dim": "#bec6e0",
+                        "secondary-fixed": "#d5e3fc",
+                        "primary-fixed": "#dae2fd",
+                        "surface-tint": "#565e74",
+                        "outline": "#76777d",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "primary-container": "#131b2e",
+                        "on-secondary-container": "#57657a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e4e2e4",
+                        "surface": "#fcf8fa",
+                        "tertiary-container": "#271901",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "on-tertiary-fixed": "#271901",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#fcdeb5"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin": "32px",
+                        "container-max": "1440px"
+                    },
+                    fontFamily: {
+                        "headline-lg": ["Newsreader"],
+                        "headline-md": ["Newsreader"],
+                        "body-md": ["Public Sans"],
+                        "label-caps": ["Public Sans"],
+                        "display-xl": ["Newsreader"],
+                        "body-lg": ["Public Sans"],
+                        "data-table": ["Public Sans"]
+                    },
+                    fontSize: {
+                        "headline-lg": ["32px", { lineHeight: "1.2", fontWeight: "500" }],
+                        "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "500" }],
+                        "body-md": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "label-caps": ["12px", { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "display-xl": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "600" }],
+                        "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "data-table": ["14px", { lineHeight: "1.4", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen overflow-x-hidden">
+<nav class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-newsreader text-sm tracking-tight border-r border-slate-200 dark:border-slate-800 flat no shadows fixed left-0 top-0 h-full flex flex-col z-40 w-64">
+<div class="p-6 border-b border-slate-200 dark:border-slate-800">
+<h1 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-widest">AgenticTheoryLab</h1>
+<p class="text-xs text-slate-500 mt-1">IS Theory Construction</p>
+</div>
+<div class="flex-1 py-4 overflow-y-auto">
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined mr-4">lightbulb</span>
+<span>Conceptualisation</span>
+</a>
+<a class="flex items-center px-6 py-3 text-teal-700 dark:text-teal-400 font-semibold border-r-2 border-teal-600 bg-teal-50/50 dark:bg-teal-950/30 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined mr-4">straighten</span>
+<span>Measurement</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined mr-4">architecture</span>
+<span>Design</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined mr-4">published_with_changes</span>
+<span>Refinement</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined mr-4">history_edu</span>
+<span>Provenance</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined mr-4">file_download</span>
+<span>Export</span>
+</a>
+</div>
+</nav>
+<header class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-newsreader text-sm font-medium border-b border-slate-200 dark:border-slate-800 flat no shadows fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-8 z-30">
+<div class="flex items-center space-x-8">
+<span class="text-xl font-bold text-slate-900 dark:text-white">AgenticTheoryLab</span>
+<div class="hidden md:flex space-x-6 h-16 items-center">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:text-teal-600 dark:hover:text-teal-300 transition-all focus:outline-none focus:ring-0" href="#">Dashboard</a>
+<a class="text-teal-700 dark:text-teal-400 border-b-2 border-teal-600 pb-4 translate-y-2 focus:outline-none focus:ring-0" href="#">Theory Map</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:text-teal-600 dark:hover:text-teal-300 transition-all focus:outline-none focus:ring-0" href="#">Audit Log</a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-400">search</span>
+<input class="pl-8 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 border-none rounded text-sm focus:outline-none focus:ring-0 w-48" placeholder="Search..." type="text"/>
+</div>
+<button class="text-slate-500 hover:text-teal-600 transition-all focus:outline-none focus:ring-0">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-slate-500 hover:text-teal-600 transition-all focus:outline-none focus:ring-0">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<aside class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-newsreader text-xs uppercase tracking-wider border-l border-slate-200 dark:border-slate-800 shadow-sm fixed right-0 top-0 h-full z-50 flex flex-col w-80">
+<div class="p-6 border-b border-slate-200 dark:border-slate-800">
+<h2 class="text-sm font-bold text-slate-700 dark:text-slate-300">Provenance Trail</h2>
+<p class="text-slate-500 mt-1 capitalize text-[10px]">Institutional Audit Log</p>
+</div>
+<div class="flex-1 py-4 overflow-y-auto">
+<a class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:translate-x-1 transition-transform duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-4 text-base">account_tree</span>
+<span>Chain of Thought</span>
+</a>
+<a class="flex items-center px-6 py-3 bg-teal-50 dark:bg-teal-900/20 text-teal-800 dark:text-teal-200 border-l-4 border-teal-600 hover:translate-x-1 transition-transform duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-4 text-base">terminal</span>
+<span>Agent Logs</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:translate-x-1 transition-transform duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-4 text-base">edit_note</span>
+<span>Human Edits</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:translate-x-1 transition-transform duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-4 text-base">verified</span>
+<span>Final Auth</span>
+</a>
+</div>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<a class="flex items-center justify-center w-full px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" href="#">
+<span class="material-symbols-outlined mr-2 text-sm">receipt_long</span>
+<span>Download Report</span>
+</a>
+</div>
+</aside>
+<main class="pt-[80px] pl-[280px] pr-[340px] pb-12 w-full max-w-container-max mx-auto">
+<div class="flex items-center space-x-4 mb-margin border-b border-surface-dim pb-4">
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined mr-2" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-caps text-label-caps">1. Conceptualisation</span>
+</div>
+<div class="h-px w-8 bg-primary"></div>
+<div class="flex items-center text-primary relative">
+<span class="font-label-caps text-label-caps text-on-background">2. Measurement</span>
+<div class="absolute -bottom-4 left-0 w-full h-1 bg-primary"></div>
+</div>
+<div class="h-px w-8 bg-outline-variant"></div>
+<div class="flex items-center text-outline">
+<span class="font-label-caps text-label-caps">3. Design</span>
+</div>
+<div class="h-px w-8 bg-outline-variant"></div>
+<div class="flex items-center text-outline">
+<span class="font-label-caps text-label-caps">4. Refinement</span>
+</div>
+</div>
+<div class="flex justify-between items-end mb-margin">
+<div>
+<h1 class="font-display-xl text-display-xl text-on-background mb-2">Item Generation Workspace</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Review, refine, and validate items proposed by the Measurement Agent.</p>
+</div>
+<div class="flex space-x-4">
+<button class="px-4 py-2 border border-outline-variant rounded text-on-surface font-label-caps text-label-caps flex items-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined mr-2 text-[18px]">tune</span>
+                    Agent Settings
+                </button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">
+                    Generate More Items
+                </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<div class="lg:col-span-3 bg-surface-container-low border border-outline-variant rounded p-6 relative flex flex-col h-full min-h-[600px]">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary-fixed rounded-l"></div>
+<div class="mb-6">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-1">Target Construct</div>
+<h2 class="font-headline-md text-headline-md text-on-background">Algorithmic Transparency</h2>
+</div>
+<div class="mb-6 flex-1">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-2">Definition</div>
+<p class="font-body-md text-body-md text-on-surface mb-4">
+                        The degree to which a user perceives the underlying mechanisms, decision rules, and data utilization of an automated system to be visible and comprehensible.
+                    </p>
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-2 mt-6">Dimensionality</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-surface-container border border-outline-variant rounded text-xs font-body-md text-on-surface">Visibility</span>
+<span class="px-2 py-1 bg-surface-container border border-outline-variant rounded text-xs font-body-md text-on-surface">Comprehensibility</span>
+<span class="px-2 py-1 bg-surface-container border border-outline-variant rounded text-xs font-body-md text-on-surface">Predictability</span>
+</div>
+</div>
+<div class="bg-surface-container rounded p-4 border border-outline-variant mt-auto">
+<div class="flex items-center mb-3">
+<span class="material-symbols-outlined mr-2 text-on-surface-variant text-[18px]">psychology</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Agent Context</span>
+</div>
+<div class="font-data-table text-data-table text-on-surface grid grid-cols-2 gap-2">
+<div class="text-on-surface-variant">Temperature:</div>
+<div class="text-right">0.3 (Convergent)</div>
+<div class="text-on-surface-variant">Model:</div>
+<div class="text-right">Theory-LLM-v2</div>
+<div class="text-on-surface-variant">Seed Lit:</div>
+<div class="text-right">14 Papers</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-9 bg-surface-container-lowest border border-outline-variant rounded shadow-sm overflow-hidden flex flex-col h-full min-h-[600px]">
+<div class="p-4 border-b border-surface-dim bg-surface-bright flex justify-between items-center">
+<div class="flex items-center space-x-4">
+<span class="font-headline-md text-headline-md text-on-background text-lg">Proposed Items</span>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded font-label-caps text-label-caps text-[10px]">12 Pending Review</span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="flex items-center bg-surface-container-lowest border border-outline-variant rounded overflow-hidden">
+<span class="material-symbols-outlined px-2 text-outline text-[18px]">filter_list</span>
+<select class="bg-transparent border-none py-1.5 pr-8 pl-0 text-sm font-data-table text-on-surface focus:ring-0">
+<option>Sort: Agent Confidence</option>
+<option>Sort: Complexity Score</option>
+<option>Sort: Alphabetical</option>
+</select>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto flex-1">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">
+<th class="py-3 px-4 border-b border-surface-dim font-medium w-16">ID</th>
+<th class="py-3 px-4 border-b border-surface-dim font-medium">Item Phrasing</th>
+<th class="py-3 px-4 border-b border-surface-dim font-medium w-40">Measurement Model</th>
+<th class="py-3 px-4 border-b border-surface-dim font-medium w-28 text-center">Val. Score</th>
+<th class="py-3 px-4 border-b border-surface-dim font-medium w-32 text-right">Human Action</th>
+</tr>
+</thead>
+<tbody class="font-data-table text-data-table text-on-surface bg-surface-container-lowest">
+<tr class="border-b border-surface-container hover:bg-surface-container-high transition-colors group">
+<td class="py-4 px-4 text-on-surface-variant align-top">AT-01</td>
+<td class="py-4 px-4 align-top pr-8">
+                                    I clearly understand how this system uses my data to make decisions.
+                                    <div class="mt-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-[11px] px-1.5 py-0.5 bg-surface-variant text-on-surface-variant rounded border border-outline-variant">Visibility</span>
+<span class="text-[11px] px-1.5 py-0.5 bg-surface-variant text-on-surface-variant rounded border border-outline-variant">Flesch-Kincaid: 8.2</span>
+</div>
+</td>
+<td class="py-4 px-4 align-top">
+<select class="w-full border border-transparent hover:border-outline-variant bg-transparent rounded py-1 px-2 outline-none text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+<option selected="">Reflective</option>
+<option>Formative</option>
+</select>
+</td>
+<td class="py-4 px-4 align-top text-center">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[#f0fdfa] text-teal-800 border border-teal-200">
+                                        0.94
+                                    </span>
+</td>
+<td class="py-4 px-4 align-top text-right">
+<div class="flex justify-end space-x-1 opacity-20 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container rounded transition-colors" title="Flag as invalid">
+<span class="material-symbols-outlined text-[20px]">flag</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-primary hover:bg-primary rounded transition-colors" title="Accept item">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface-container-high transition-colors group">
+<td class="py-4 px-4 text-on-surface-variant align-top">AT-02</td>
+<td class="py-4 px-4 align-top pr-8">
+                                    The logic behind the algorithm's recommendations is completely opaque to me.
+                                    <div class="mt-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-[11px] px-1.5 py-0.5 bg-surface-variant text-on-surface-variant rounded border border-outline-variant">Comprehensibility</span>
+<span class="text-[11px] px-1.5 py-0.5 bg-surface-variant text-on-surface-variant rounded border border-outline-variant text-error font-medium">Reverse Coded</span>
+</div>
+</td>
+<td class="py-4 px-4 align-top">
+<select class="w-full border border-transparent hover:border-outline-variant bg-transparent rounded py-1 px-2 outline-none text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+<option selected="">Reflective</option>
+<option>Formative</option>
+</select>
+</td>
+<td class="py-4 px-4 align-top text-center">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[#f0fdfa] text-teal-800 border border-teal-200">
+                                        0.88
+                                    </span>
+</td>
+<td class="py-4 px-4 align-top text-right">
+<div class="flex justify-end space-x-1 opacity-20 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">flag</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-primary hover:bg-primary rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface-container-high transition-colors group">
+<td class="py-4 px-4 text-on-surface-variant align-top">AT-03</td>
+<td class="py-4 px-4 align-top pr-8">
+                                    I can usually predict what the system will do next based on my inputs.
+                                    <div class="mt-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-[11px] px-1.5 py-0.5 bg-surface-variant text-on-surface-variant rounded border border-outline-variant">Predictability</span>
+</div>
+</td>
+<td class="py-4 px-4 align-top">
+<select class="w-full border border-transparent hover:border-outline-variant bg-transparent rounded py-1 px-2 outline-none text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+<option selected="">Reflective</option>
+<option>Formative</option>
+</select>
+</td>
+<td class="py-4 px-4 align-top text-center">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surface-container-high text-on-surface border border-outline-variant">
+                                        0.76
+                                    </span>
+</td>
+<td class="py-4 px-4 align-top text-right">
+<div class="flex justify-end space-x-1 opacity-20 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">flag</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-primary hover:bg-primary rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface-container-high transition-colors group bg-error-container/20">
+<td class="py-4 px-4 text-on-surface-variant align-top">AT-04</td>
+<td class="py-4 px-4 align-top pr-8">
+                                    The system provides a clear mapping of the multi-dimensional vectors used in its neural net.
+                                    <div class="mt-2 flex gap-2 opacity-100">
+<span class="text-[11px] px-1.5 py-0.5 bg-error-container text-error rounded border border-error font-medium flex items-center">
+<span class="material-symbols-outlined text-[12px] mr-1">warning</span> Complexity Alert
+                                        </span>
+</div>
+</td>
+<td class="py-4 px-4 align-top">
+<select class="w-full border border-transparent hover:border-outline-variant bg-transparent rounded py-1 px-2 outline-none text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+<option selected="">Reflective</option>
+<option>Formative</option>
+</select>
+</td>
+<td class="py-4 px-4 align-top text-center">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surface-container-high text-on-surface border border-outline-variant">
+                                        0.45
+                                    </span>
+</td>
+<td class="py-4 px-4 align-top text-right">
+<div class="flex justify-end space-x-1 opacity-100">
+<button class="p-1.5 text-error bg-error-container hover:bg-error hover:text-on-error rounded transition-colors border border-error">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-primary hover:bg-primary rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</body></html>

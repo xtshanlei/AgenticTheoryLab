@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Provenance Trail &amp; Export</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mono-text {
+            font-family: 'Fira Code', monospace;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary-container": "#d5e3fc",
+                        "surface-container-high": "#eae7e9",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "background": "#fcf8fa",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "primary-fixed": "#dae2fd",
+                        "on-primary-container": "#7c839b",
+                        "surface-container-highest": "#e4e2e4",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1b1b1d",
+                        "outline-variant": "#c6c6cd",
+                        "primary": "#000000",
+                        "tertiary": "#000000",
+                        "on-primary-fixed": "#131b2e",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f6f3f5",
+                        "secondary": "#515f74",
+                        "primary-container": "#131b2e",
+                        "tertiary-fixed": "#fcdeb5",
+                        "surface-variant": "#e4e2e4",
+                        "surface-container": "#f0edef",
+                        "surface-bright": "#fcf8fa",
+                        "surface-dim": "#dcd9db",
+                        "on-surface": "#1b1b1d",
+                        "surface": "#fcf8fa",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary-fixed": "#271901",
+                        "inverse-primary": "#bec6e0",
+                        "tertiary-container": "#271901",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-secondary-container": "#57657a",
+                        "outline": "#76777d",
+                        "inverse-surface": "#303032",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-tertiary-container": "#98805d",
+                        "on-surface-variant": "#45464d",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f3f0f2",
+                        "surface-tint": "#565e74",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#574425"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin": "32px",
+                        "container-max": "1440px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Newsreader"],
+                        "headline-lg": ["Newsreader"],
+                        "label-caps": ["Public Sans"],
+                        "body-md": ["Public Sans"],
+                        "body-lg": ["Public Sans"],
+                        "display-xl": ["Newsreader"],
+                        "data-table": ["Public Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "data-table": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col z-40 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-newsreader text-sm tracking-tight docked left-0 h-screen w-64 border-r border-slate-200 dark:border-slate-800 flat no shadows">
+<div class="p-6 border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<img alt="Research Institution Logo" class="w-10 h-10 rounded-full" data-alt="A minimalist, geometric institutional logo in deep navy and silver, conveying academic rigor and precision. Soft overhead lighting, neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Xcz7cB2d4agvl1BVEwq2xCNCoZAl45s20iry80c7ghs3Z1rDXeWcQIaXh1c01Snn1byJhyauuIG-4nmgUBKfjIolxkq1FhOJNM-unZb4tCCxoYYx7-LE9fNFfcTxkxknaBgJscvXYZz9HQJWGhTFgsotvPsPTzA8cULpVPmKHy-dJozQECn96SGDGe6tJZpM6I7_OoLeQV9RLu1TIZynD3NXGIZGZmoUe9my3706uCO12lJ12VrrkjSb5VuniKC2FM7MiZK_AR0h"/>
+<div>
+<h1 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-widest">AgenticTheoryLab</h1>
+<p class="text-xs text-slate-500 mt-1 font-body-md">IS Theory Construction</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-4">
+<ul class="flex flex-col space-y-1">
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+                        Conceptualisation
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="straighten">straighten</span>
+                        Measurement
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+                        Design
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="published_with_changes">published_with_changes</span>
+                        Refinement
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-teal-700 dark:text-teal-400 font-semibold border-r-2 border-teal-600 bg-teal-50/50 dark:bg-teal-950/30 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+                        Provenance
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="file_download">file_download</span>
+                        Export
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-8 z-30 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-newsreader text-sm font-medium docked full-width top-0 border-b border-slate-200 dark:border-slate-800 flat no shadows focus:outline-none focus:ring-0">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-slate-900 dark:text-white">AgenticTheoryLab</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:text-teal-600 dark:hover:text-teal-300 transition-all pt-4 pb-4" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:text-teal-600 dark:hover:text-teal-300 transition-all pt-4 pb-4" href="#">Theory Map</a>
+<a class="text-teal-700 dark:text-teal-400 border-b-2 border-teal-600 pb-4 pt-4" href="#">Audit Log</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container-low border border-outline-variant text-on-surface text-sm rounded-full focus:ring-primary focus:border-primary block w-full pl-10 p-2 font-body-md" placeholder="Search..." style="width: 200px;" type="text"/>
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant" data-icon="search">search</span>
+</div>
+</div>
+<button class="text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-300 transition-all focus:outline-none focus:ring-0">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-300 transition-all focus:outline-none focus:ring-0">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<img alt="User Profile" class="w-8 h-8 rounded-full ml-2 border border-slate-200" data-alt="A professional headshot of an academic researcher, lit with soft, flattering light against a neutral grey background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIArNZDTVZMt2voZ1tjR5shdJNeFJmLLjKWWpZGiFC0EiPPrBU3hxf1CN9G1zZ4iG8pcUftt1K1hmuVmZ-t9C2u-9mKUGWJFz8_B4cHZpqJNChVusAVHlEuWUZ4Q5bZBmBIK9iE9MuxbcT4TlFyhne0xYQYRvuwp8mvp3U4ExW5crZ_wpopxvgPsWtqBMCR9xvoAxXrRuAPI-m3eSuUhOPTAla-jGwtVAMKuL264j39TZrlmQ3iX323yMLMkf8KiME6rMtkAKII1uf"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-64 mt-16 p-8 min-h-screen bg-surface flex justify-center">
+<!-- 8-column center layout for long-form research reading -->
+<div class="w-full max-w-4xl">
+<!-- Header Section -->
+<div class="mb-10">
+<p class="font-label-caps text-label-caps text-secondary mb-2 tracking-widest uppercase">Phase 4 / Audit &amp; Export</p>
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-4">Provenance Trail &amp; Documentation</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">A comprehensive, immutable log of human-AI collaboration. Review agent reasoning, inspect human interventions, and export the formal methodology appendix.</p>
+</div>
+<!-- Workflow Stepper -->
+<div class="flex items-center gap-2 mb-12">
+<div class="flex-1 h-2 bg-primary-container rounded-sm"></div>
+<div class="flex-1 h-2 bg-primary-container rounded-sm"></div>
+<div class="flex-1 h-2 bg-primary-container rounded-sm"></div>
+<div class="flex-1 h-2 border-b-2 border-teal-600 rounded-sm"></div>
+<div class="flex-1 h-2 border border-outline-variant rounded-sm bg-transparent"></div>
+</div>
+<!-- Bento Grid Layout for Export Options -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- Export Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-6 flex flex-col justify-between hover:border-slate-300 transition-colors">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary" data-icon="description">description</span>
+<h3 class="font-headline-md text-body-lg font-medium text-on-background">Markdown Report</h3>
+</div>
+<p class="font-body-md text-data-table text-on-surface-variant mb-6">Full narrative documentation suitable for peer review submission.</p>
+</div>
+<button class="bg-transparent border border-outline-variant text-on-background font-label-caps text-label-caps py-2 px-4 rounded hover:bg-surface-container-low transition-colors w-full flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="download">download</span> EXPORT .MD
+                    </button>
+</div>
+<!-- Export Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-6 flex flex-col justify-between hover:border-slate-300 transition-colors">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary" data-icon="data_object">data_object</span>
+<h3 class="font-headline-md text-body-lg font-medium text-on-background">Provenance Log</h3>
+</div>
+<p class="font-body-md text-data-table text-on-surface-variant mb-6">Machine-readable structured log of all state changes and prompts.</p>
+</div>
+<button class="bg-transparent border border-outline-variant text-on-background font-label-caps text-label-caps py-2 px-4 rounded hover:bg-surface-container-low transition-colors w-full flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="download">download</span> EXPORT .JSON
+                    </button>
+</div>
+<!-- Export Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-6 flex flex-col justify-between hover:border-slate-300 transition-colors">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary" data-icon="science">science</span>
+<h3 class="font-headline-md text-body-lg font-medium text-on-background">GenAI Appendix</h3>
+</div>
+<p class="font-body-md text-data-table text-on-surface-variant mb-6">Standardized disclosure of AI use in theory construction methodology.</p>
+</div>
+<button class="bg-primary-container text-on-primary font-label-caps text-label-caps py-2 px-4 rounded hover:opacity-90 transition-opacity w-full flex items-center justify-center gap-2 border border-transparent">
+<span class="material-symbols-outlined text-[16px]" data-icon="picture_as_pdf">picture_as_pdf</span> GENERATE PDF
+                    </button>
+</div>
+</div>
+<!-- Interaction Log Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden">
+<div class="bg-primary-container px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-md text-[18px] text-on-primary font-medium tracking-wide">Interaction Log</h3>
+<div class="flex gap-4 text-on-primary font-label-caps text-[10px] opacity-80">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-teal-300"></span> AGENT ACTION</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-600"></span> HUMAN OVERRIDE</span>
+</div>
+</div>
+<div class="p-0">
+<!-- Log Entry 1: Agent Prompt -->
+<div class="border-b border-slate-100 flex p-6 relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-teal-500"></div> <!-- Header Ribbon -->
+<div class="w-32 flex-shrink-0 pt-1">
+<span class="font-label-caps text-[10px] text-secondary block">10:42 AM</span>
+<span class="font-label-caps text-[10px] text-teal-700 bg-teal-50 px-2 py-0.5 rounded mt-1 inline-block">SYSTEM</span>
+</div>
+<div class="flex-1 pl-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-[16px] text-teal-600" data-icon="terminal">terminal</span>
+<span class="font-body-md text-data-table font-medium text-on-background">Agent Prompt Dispatched</span>
+</div>
+<div class="bg-[#F0FDFA] border border-teal-100 rounded p-4 mt-2">
+<pre class="mono-text text-[12px] text-slate-700 whitespace-pre-wrap">Generate structural model propositions linking [Construct A: Perceived Utility] to [Construct B: Adoption Intent], accounting for mediator [Construct C: Technical Anxiety]. Format as formal hypotheses.</pre>
+</div>
+</div>
+</div>
+<!-- Log Entry 2: AI Output -->
+<div class="border-b border-slate-100 flex p-6 relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-teal-300"></div>
+<div class="w-32 flex-shrink-0 pt-1">
+<span class="font-label-caps text-[10px] text-secondary block">10:45 AM</span>
+<span class="font-label-caps text-[10px] text-teal-700 bg-teal-50 px-2 py-0.5 rounded mt-1 inline-block">AGENT</span>
+</div>
+<div class="flex-1 pl-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-[16px] text-teal-600" data-icon="smart_toy">smart_toy</span>
+<span class="font-body-md text-data-table font-medium text-on-background">Model Generation Completed</span>
+</div>
+<div class="bg-[#F0FDFA] border border-teal-100 rounded p-4 mt-2 font-body-md text-[14px] text-slate-800">
+<p class="mb-2"><strong class="font-medium">H1:</strong> Perceived Utility positively influences Adoption Intent.</p>
+<p class="mb-2"><strong class="font-medium">H2:</strong> Technical Anxiety negatively moderates the relationship between Perceived Utility and Adoption Intent.</p>
+<p><strong class="font-medium">H3:</strong> Technical Anxiety directly and negatively influences Adoption Intent.</p>
+</div>
+</div>
+</div>
+<!-- Log Entry 3: Human Revision -->
+<div class="border-b border-slate-100 flex p-6 relative bg-slate-50">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-600"></div>
+<div class="w-32 flex-shrink-0 pt-1">
+<span class="font-label-caps text-[10px] text-secondary block">11:12 AM</span>
+<span class="font-label-caps text-[10px] text-amber-800 bg-amber-100 px-2 py-0.5 rounded mt-1 inline-block">HUMAN</span>
+</div>
+<div class="flex-1 pl-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-[16px] text-amber-700" data-icon="edit_note">edit_note</span>
+<span class="font-body-md text-data-table font-medium text-on-background">Manual Revision Applied</span>
+</div>
+<div class="bg-white border border-amber-200 rounded p-4 mt-2">
+<p class="font-body-md text-[13px] text-slate-600 italic mb-3">"Adjusted H2 to reflect mediation rather than moderation, based on literature review."</p>
+<div class="font-body-md text-[14px]">
+<p class="line-through text-slate-400 mb-1">H2: Technical Anxiety negatively moderates the relationship...</p>
+<p class="text-amber-800 font-medium">+ H2: Technical Anxiety partially mediates the relationship between Perceived Utility and Adoption Intent.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Log Entry 4: Final Approval -->
+<div class="flex p-6 relative bg-white">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-[#93000a]"></div> <!-- Burgundy Peer Review -->
+<div class="w-32 flex-shrink-0 pt-1">
+<span class="font-label-caps text-[10px] text-secondary block">11:15 AM</span>
+<span class="font-label-caps text-[10px] text-[#93000a] bg-red-50 px-2 py-0.5 rounded mt-1 inline-block">VERIFIED</span>
+</div>
+<div class="flex-1 pl-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#93000a]" data-icon="verified">verified</span>
+<span class="font-body-md text-data-table font-medium text-on-background">Section Approved &amp; Locked</span>
+<span class="ml-auto font-label-caps text-[10px] text-slate-400">ID: a7f89b2c</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Actions -->
+<div class="mt-8 flex justify-end gap-4">
+<button class="bg-transparent border border-outline-variant text-on-background font-label-caps text-label-caps py-2 px-6 rounded hover:bg-surface-container-low transition-colors">
+                    ARCHIVE SESSION
+                </button>
+<button class="bg-[#93000a] text-white font-label-caps text-label-caps py-2 px-6 rounded hover:opacity-90 transition-opacity">
+                    FINALIZE AUDIT LOG
+                </button>
+</div>
+</div>
+</main>
+<!-- NavigationDrawer (Right Side) -->
+<aside class="fixed right-0 top-0 h-full z-50 flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-newsreader text-xs uppercase tracking-wider docked right-0 h-screen w-80 border-l border-slate-200 dark:border-slate-800 shadow-sm ease-in-out hidden xl:flex">
+<div class="p-6 border-b border-slate-200 dark:border-slate-800">
+<h2 class="text-sm font-bold text-slate-700 dark:text-slate-300">Provenance Trail</h2>
+<p class="text-xs text-slate-500 mt-1 lowercase first-letter:uppercase">Institutional Audit Log</p>
+</div>
+<div class="flex-1 overflow-y-auto py-4">
+<ul class="flex flex-col">
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:translate-x-1 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+                        Chain of Thought
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:translate-x-1 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+                        Agent Logs
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 bg-teal-50 dark:bg-teal-900/20 text-teal-800 dark:text-teal-200 border-l-4 border-teal-600 hover:translate-x-1 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+                        Human Edits
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:translate-x-1 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+                        Final Auth
+                    </a>
+</li>
+</ul>
+</div>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:translate-x-1 transition-transform duration-150 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+                Download Report
+            </a>
+</div>
+</aside>
+</body></html>

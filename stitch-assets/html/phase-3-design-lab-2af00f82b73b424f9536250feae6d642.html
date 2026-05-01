@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Phase 3 Workspace: Research Design &amp; Data Collection - AgenticTheoryLab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&amp;family=Public+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c6c6cd",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-primary-container": "#7c839b",
+                        "surface-container-high": "#eae7e9",
+                        "background": "#fcf8fa",
+                        "on-background": "#1b1b1d",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#fcf8fa",
+                        "secondary": "#515f74",
+                        "primary": "#000000",
+                        "on-surface-variant": "#45464d",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "on-surface": "#1b1b1d",
+                        "on-primary-fixed": "#131b2e",
+                        "inverse-surface": "#303032",
+                        "secondary-container": "#d5e3fc",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f6f3f5",
+                        "surface-container": "#f0edef",
+                        "surface-dim": "#dcd9db",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary-container": "#98805d",
+                        "inverse-primary": "#bec6e0",
+                        "surface-container-highest": "#e4e2e4",
+                        "primary-fixed-dim": "#bec6e0",
+                        "secondary-fixed": "#d5e3fc",
+                        "primary-fixed": "#dae2fd",
+                        "surface-tint": "#565e74",
+                        "outline": "#76777d",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "primary-container": "#131b2e",
+                        "on-secondary-container": "#57657a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e4e2e4",
+                        "surface": "#fcf8fa",
+                        "tertiary-container": "#271901",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "on-tertiary-fixed": "#271901",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#fcdeb5",
+                        "brand-navy": "#1a2530",
+                        "brand-teal": "#0f766e",
+                        "brand-teal-light": "#f0fdfa",
+                        "brand-burgundy": "#831843",
+                        "slate-50": "#f8fafc",
+                        "slate-100": "#f1f5f9",
+                        "slate-200": "#e2e8f0",
+                        "slate-300": "#cbd5e1",
+                        "slate-400": "#94a3b8",
+                        "slate-500": "#64748b",
+                        "slate-600": "#475569",
+                        "slate-700": "#334155",
+                        "slate-800": "#1e293b",
+                        "slate-900": "#0f172a",
+                        "slate-950": "#020617",
+                        "teal-50": "#f0fdfa",
+                        "teal-600": "#0d9488",
+                        "teal-700": "#0f766e",
+                        "teal-800": "#115e59",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin": "32px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Newsreader", "serif"],
+                        "headline-md": ["Newsreader", "serif"],
+                        "body-md": ["Public Sans", "sans-serif"],
+                        "label-caps": ["Public Sans", "sans-serif"],
+                        "display-xl": ["Newsreader", "serif"],
+                        "body-lg": ["Public Sans", "sans-serif"],
+                        "data-table": ["Public Sans", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "data-table": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-8 z-30 bg-white border-b border-slate-200">
+<div class="flex items-center space-x-8">
+<span class="text-xl font-bold text-slate-900 font-headline-md tracking-tight">AgenticTheoryLab</span>
+<nav class="hidden md:flex space-x-6 h-16">
+<a class="text-slate-500 hover:text-slate-800 transition-all font-newsreader text-sm font-medium flex items-center h-full pt-4 pb-4" href="#">Dashboard</a>
+<a class="text-slate-500 hover:text-slate-800 transition-all font-newsreader text-sm font-medium flex items-center h-full pt-4 pb-4" href="#">Theory Map</a>
+<a class="text-slate-500 hover:text-slate-800 transition-all font-newsreader text-sm font-medium flex items-center h-full pt-4 pb-4" href="#">Audit Log</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<button class="focus:outline-none focus:ring-0 text-slate-500 hover:text-teal-600 transition-all">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="focus:outline-none focus:ring-0 text-slate-500 hover:text-teal-600 transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="focus:outline-none focus:ring-0 text-slate-500 hover:text-teal-600 transition-all">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col z-40 bg-slate-50 h-screen w-64 border-r border-slate-200">
+<div class="p-6 border-b border-slate-200 flex items-center space-x-3">
+<img alt="Research Institution Logo" class="w-8 h-8 rounded-sm object-cover filter grayscale" data-alt="A minimalist, abstract geometric logo representing a modern research institution, featuring intersecting lines and a deep navy and stark white color palette. The design should convey precision, authority, and rigorous scientific inquiry, suitable for a high-end academic interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU5mMTBsp_u9U2KSvThiq5lMWxeAzPha2roawg3MApV4Lh4FWV9zKvC2ns72AlTfm7DTB9rU9YQiH9Ro13scN-G-8yq9GaVHtFWZBAcKwVNcFhhxDsFlodPEqBjNnFmYt9oksMIYvihNQ7xNRvgMzz5OhSOYmUNtR6y4Hg7hNkwz6nRbal036igri6NCBtc1SSaZncYwR0BBvHrIv42l76Fj-gLVYbYz_doKLyDqANPtMTzsFRho5UanHDPA6ac_fJ9nm52Q8FPgUe"/>
+<div>
+<h1 class="font-headline-md text-sm font-bold text-slate-900 uppercase tracking-widest leading-none">AgenticTheoryLab</h1>
+<p class="font-body-md text-xs text-slate-500 mt-1">IS Theory Construction</p>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-4">
+<a class="flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="lightbulb">lightbulb</span>
+<span class="font-newsreader text-sm tracking-tight">Conceptualisation</span>
+</a>
+<a class="flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="straighten">straighten</span>
+<span class="font-newsreader text-sm tracking-tight">Measurement</span>
+</a>
+<a class="flex items-center space-x-3 px-6 py-3 text-teal-700 font-semibold border-r-2 border-teal-600 bg-teal-50/50 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="architecture">architecture</span>
+<span class="font-newsreader text-sm tracking-tight">Design</span>
+</a>
+<a class="flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="published_with_changes">published_with_changes</span>
+<span class="font-newsreader text-sm tracking-tight">Refinement</span>
+</a>
+<a class="flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="history_edu">history_edu</span>
+<span class="font-newsreader text-sm tracking-tight">Provenance</span>
+</a>
+<a class="flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="file_download">file_download</span>
+<span class="font-newsreader text-sm tracking-tight">Export</span>
+</a>
+</nav>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 mt-16 p-8 max-w-[1440px] mx-auto min-h-screen">
+<!-- 4-Phase Workflow Stepper -->
+<div class="mb-8 border-b border-slate-200 pb-4">
+<div class="flex items-center space-x-4">
+<div class="flex items-center text-slate-400">
+<span class="w-6 h-6 rounded-full bg-brand-navy text-white flex items-center justify-center text-xs font-bold mr-2">1</span>
+<span class="font-label-caps text-label-caps">Conceptualisation</span>
+<span class="material-symbols-outlined mx-2 text-sm">chevron_right</span>
+</div>
+<div class="flex items-center text-slate-400">
+<span class="w-6 h-6 rounded-full bg-brand-navy text-white flex items-center justify-center text-xs font-bold mr-2">2</span>
+<span class="font-label-caps text-label-caps">Measurement</span>
+<span class="material-symbols-outlined mx-2 text-sm">chevron_right</span>
+</div>
+<div class="flex items-center text-brand-teal border-b-2 border-brand-teal pb-1">
+<span class="w-6 h-6 rounded-full bg-brand-teal text-white flex items-center justify-center text-xs font-bold mr-2">3</span>
+<span class="font-label-caps text-label-caps text-brand-navy">Research Design</span>
+<span class="material-symbols-outlined mx-2 text-sm text-slate-400">chevron_right</span>
+</div>
+<div class="flex items-center text-slate-400">
+<span class="w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold mr-2">4</span>
+<span class="font-label-caps text-label-caps">Execution</span>
+</div>
+</div>
+</div>
+<div class="mb-margin">
+<h2 class="font-headline-lg text-headline-lg text-brand-navy mb-2">Empirical Strategy Selection</h2>
+<p class="font-body-lg text-body-lg text-secondary max-w-3xl">Evaluate and select the optimal research design based on theoretical constraints, endogeneity risks, and data availability.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Strategy Comparison Area (Spans 8 columns) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-unit">
+<!-- Agent Recommendation Card -->
+<div class="bg-brand-teal-light border border-slate-200 rounded-DEFAULT p-6 relative overflow-hidden flex flex-col h-full">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-teal"></div>
+<div class="flex items-start justify-between mb-4">
+<div>
+<div class="flex items-center space-x-2 mb-1">
+<span class="material-symbols-outlined text-brand-teal text-sm">smart_toy</span>
+<span class="font-label-caps text-label-caps text-brand-teal uppercase tracking-widest">Agent Recommendation</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-brand-navy">Difference-in-Differences (DiD)</h3>
+</div>
+<span class="px-3 py-1 bg-white border border-brand-teal text-brand-teal font-label-caps text-[10px] rounded-full uppercase tracking-wider">High Validity</span>
+</div>
+<p class="font-mono text-sm text-slate-700 mb-6 leading-relaxed bg-white/50 p-4 border border-slate-100 rounded-sm">
+                        &gt; ANALYZING CAUSAL IDENTIFICATION STRATEGY...<br/>
+                        &gt; Theoretical construct involves exogenous shock (Policy Implementation T=1).<br/>
+                        &gt; Panel data available for N=450 entities across T=10 periods.<br/>
+                        &gt; Parallel trends assumption holds in pre-treatment period (p=0.42).<br/>
+                        &gt; RECOMMENDATION: Staggered DiD provides strongest causal identification while controlling for unobserved time-invariant confounders.
+                    </p>
+<div class="mt-auto flex justify-end space-x-4">
+<button class="px-4 py-2 bg-transparent border border-slate-300 text-brand-navy font-label-caps text-label-caps rounded-sm hover:bg-slate-50 transition-colors">View Alternatives</button>
+<button class="px-4 py-2 bg-brand-navy text-white font-label-caps text-label-caps rounded-sm hover:bg-slate-800 transition-colors flex items-center">
+                            Select Strategy <span class="material-symbols-outlined ml-2 text-sm" data-weight="fill">check_circle</span>
+</button>
+</div>
+</div>
+<!-- Comparison Table Card -->
+<div class="bg-white border border-slate-200 rounded-DEFAULT mt-6">
+<div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+<h4 class="font-label-caps text-label-caps text-brand-navy uppercase tracking-wider">Strategy Trade-off Analysis</h4>
+<button class="text-slate-400 hover:text-brand-navy"><span class="material-symbols-outlined text-sm">filter_list</span></button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse font-data-table text-data-table">
+<thead>
+<tr>
+<th class="py-3 px-4 border-b border-slate-200 font-label-caps text-[11px] text-brand-navy uppercase tracking-wider bg-slate-50">Design Type</th>
+<th class="py-3 px-4 border-b border-slate-200 font-label-caps text-[11px] text-brand-navy uppercase tracking-wider bg-slate-50">Internal Validity</th>
+<th class="py-3 px-4 border-b border-slate-200 font-label-caps text-[11px] text-brand-navy uppercase tracking-wider bg-slate-50">External Validity</th>
+<th class="py-3 px-4 border-b border-slate-200 font-label-caps text-[11px] text-brand-navy uppercase tracking-wider bg-slate-50">Data Req.</th>
+<th class="py-3 px-4 border-b border-slate-200 font-label-caps text-[11px] text-brand-navy uppercase tracking-wider bg-slate-50">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="py-3 px-4 border-b border-slate-100 font-medium text-brand-navy">Natural Experiment (DiD)</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden"><div class="bg-brand-teal w-4/5 h-full"></div></div>
+</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden"><div class="bg-slate-500 w-3/5 h-full"></div></div>
+</td>
+<td class="py-3 px-4 border-b border-slate-100 text-slate-600 text-xs">Panel (T&gt;2)</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<span class="text-brand-teal text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">Simulate</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="py-3 px-4 border-b border-slate-100 font-medium text-slate-700">Cross-sectional OLS</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden"><div class="bg-brand-burgundy w-2/5 h-full"></div></div>
+</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden"><div class="bg-brand-teal w-4/5 h-full"></div></div>
+</td>
+<td class="py-3 px-4 border-b border-slate-100 text-slate-600 text-xs">Survey (N&gt;100)</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<span class="text-brand-teal text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">Simulate</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="py-3 px-4 border-b border-slate-100 font-medium text-slate-700">Lab Experiment</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden"><div class="bg-brand-teal w-full h-full"></div></div>
+</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden"><div class="bg-brand-burgundy w-1/5 h-full"></div></div>
+</td>
+<td class="py-3 px-4 border-b border-slate-100 text-slate-600 text-xs">Subjects (N&gt;60)</td>
+<td class="py-3 px-4 border-b border-slate-100">
+<span class="text-brand-teal text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">Simulate</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Threat Assessment Panel (Spans 4 columns) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- Human Oversight Card -->
+<div class="bg-white border border-slate-200 rounded-DEFAULT relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-burgundy"></div>
+<div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-brand-burgundy text-[18px]">gavel</span>
+<h4 class="font-label-caps text-label-caps text-brand-navy uppercase tracking-wider">Validity Threats</h4>
+</div>
+<span class="w-2 h-2 rounded-full bg-brand-burgundy animate-pulse"></span>
+</div>
+<div class="p-5 space-y-4">
+<!-- Threat Item -->
+<div class="pb-3 border-b border-slate-100 last:border-0 last:pb-0">
+<div class="flex justify-between items-start mb-1">
+<span class="font-medium text-sm text-brand-navy">Omitted Variable Bias</span>
+<span class="text-[10px] px-2 py-0.5 bg-brand-burgundy/10 text-brand-burgundy rounded-sm font-semibold">HIGH RISK</span>
+</div>
+<p class="text-xs text-slate-500 leading-tight">Unobserved organizational culture may correlate with both IT adoption and performance outcomes.</p>
+<div class="mt-2 flex items-center text-xs text-brand-teal cursor-pointer hover:underline">
+<span class="material-symbols-outlined text-[14px] mr-1">add_circle</span> Add Control Variable
+                            </div>
+</div>
+<!-- Threat Item -->
+<div class="pb-3 border-b border-slate-100 last:border-0 last:pb-0">
+<div class="flex justify-between items-start mb-1">
+<span class="font-medium text-sm text-brand-navy">Reverse Causality</span>
+<span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-sm font-semibold">LOW RISK</span>
+</div>
+<p class="text-xs text-slate-500 leading-tight">Mitigated by T=1 exogenous policy shock in recommended DiD design.</p>
+</div>
+</div>
+</div>
+<!-- Data Source Card -->
+<div class="bg-white border border-slate-200 rounded-DEFAULT relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-400"></div>
+<div class="p-5 border-b border-slate-100 bg-slate-50">
+<h4 class="font-label-caps text-label-caps text-brand-navy uppercase tracking-wider mb-1">Target Data Source</h4>
+</div>
+<div class="p-5">
+<div class="flex items-center space-x-3 mb-4">
+<div class="w-10 h-10 bg-slate-100 rounded flex items-center justify-center border border-slate-200">
+<span class="material-symbols-outlined text-slate-500">database</span>
+</div>
+<div>
+<div class="font-medium text-sm text-brand-navy">Compustat / CRSP</div>
+<div class="text-xs text-slate-500">Panel Data • 2010-2023</div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs">
+<span class="text-slate-500">Firms (N):</span>
+<span class="font-mono text-brand-navy">4,521</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-slate-500">Observations:</span>
+<span class="font-mono text-brand-navy">54,252</span>
+</div>
+</div>
+<button class="w-full mt-4 py-2 border border-slate-300 text-xs font-label-caps text-brand-navy rounded-sm hover:bg-slate-50 transition-colors uppercase tracking-wider">Configure Pipeline</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- NavigationDrawer (Provenance Trail - Hidden by default, representing the structure if toggled) -->
+<aside class="hidden fixed right-0 top-0 h-full z-50 flex flex-col bg-slate-50 h-screen w-80 border-l border-slate-200 shadow-sm transition-transform duration-150 ease-in-out translate-x-full">
+<div class="p-6 border-b border-slate-200">
+<h2 class="text-sm font-bold text-slate-700 font-headline-md">Provenance Trail</h2>
+<p class="text-xs text-slate-500 mt-1 font-body-md">Institutional Audit Log</p>
+</div>
+<div class="flex-1 overflow-y-auto">
+<nav class="flex flex-col py-2">
+<a class="flex items-center px-6 py-3 bg-teal-50 text-teal-800 border-l-4 border-teal-600 font-newsreader text-xs uppercase tracking-wider hover:translate-x-1 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="account_tree">account_tree</span> Chain of Thought
+                </a>
+<a class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-100 font-newsreader text-xs uppercase tracking-wider hover:translate-x-1 transition-transform duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="terminal">terminal</span> Agent Logs
+                </a>
+<a class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-100 font-newsreader text-xs uppercase tracking-wider hover:translate-x-1 transition-transform duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="edit_note">edit_note</span> Human Edits
+                </a>
+<a class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-100 font-newsreader text-xs uppercase tracking-wider hover:translate-x-1 transition-transform duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="verified">verified</span> Final Auth
+                </a>
+</nav>
+</div>
+<div class="p-4 border-t border-slate-200">
+<a class="flex items-center justify-center px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-sm font-newsreader text-xs uppercase tracking-wider transition-colors" href="#">
+<span class="material-symbols-outlined mr-2 text-sm" data-icon="receipt_long">receipt_long</span> Download Report
+            </a>
+</div>
+</aside>
+</body></html>
